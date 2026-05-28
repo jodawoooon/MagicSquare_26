@@ -1,0 +1,31 @@
+---
+description: ECB architecture boundaries and dependency direction for MagicSquare
+alwaysApply: true
+---
+
+# ECB Architecture Rule
+
+## Layer Responsibilities
+
+- `boundary`: external I/O handling (CLI, API, UI), request/response mapping.
+- `control`: use-case orchestration, flow coordination, validation execution.
+- `entity`: domain state and invariants, core business rules, framework-independent logic.
+
+## Dependency Direction
+
+- Allowed:
+  - `boundary -> control`
+  - `control -> entity`
+- Disallowed:
+  - `boundary -> entity` direct dependency
+  - `control -> boundary`
+  - `entity -> control`
+  - `entity -> boundary`
+  - Any circular dependency between layers
+
+## Structural Enforcement
+
+- Place code by layer intent, not convenience.
+- Keep domain rules in `entity`, not in I/O adapters.
+- Keep orchestration decisions in `control`, not in tests or boundary.
+- Reject changes that break ECB direction even if tests pass.

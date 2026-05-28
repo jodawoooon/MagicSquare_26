@@ -173,17 +173,25 @@ MagicSquare_xxx/
 ├── Report/
 │   └── 01. 4x4_MagicSquare_Problem_Definition_Report.md
 │   └── 02. 4x4_MagicSquare_Dual-Track_TDD_CleanArchitecture_Design_Report.md
+│   └── 03. MagicSquare_CursorRules_and_UserEntity_Implementation_Report.md
+│   └── 04. MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md
 └── Prompt/
     └── 01. 4x4_MagicSquare_Problem_Definition_Report_Prompt.md
     └── 02. MagicSquare_4x4_TDD_Interactive_Prompt_Transcript.md
+    └── 03. MagicSquare_CursorRules_UserEntity_Interactive_Prompt_Transcript.md
+    └── 04. MagicSquare_Level1-5_Interactive_Prompt_Transcript.md
 ```
 
 | 경로 | 설명 |
 |------|------|
 | [Report/01. 4x4_MagicSquare_Problem_Definition_Report.md](Report/01.%204x4_MagicSquare_Problem_Definition_Report.md) | STEP 1~5 **통합 보고서** (목차·상세 분석·합의 체크리스트) |
 | [Report/02. 4x4_MagicSquare_Dual-Track_TDD_CleanArchitecture_Design_Report.md](Report/02.%204x4_MagicSquare_Dual-Track_TDD_CleanArchitecture_Design_Report.md) | Dual-Track UI+Logic TDD + Clean Architecture **설계 보고서** |
+| [Report/03. MagicSquare_CursorRules_and_UserEntity_Implementation_Report.md](Report/03.%20MagicSquare_CursorRules_and_UserEntity_Implementation_Report.md) | Cursor Rules 반영 + UserEntity 구현 관련 **결과 보고서** |
+| [Report/04. MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md](Report/04.%20MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md) | Level 1~5(Epic/Journey/Story/Scenario/Verification) **통합 검증 보고서** |
 | [Prompt/01. 4x4_MagicSquare_Problem_Definition_Report_Prompt.md](Prompt/01.%204x4_MagicSquare_Problem_Definition_Report_Prompt.md) | 동일 워크플로 **재실행용** 대화형 프롬프트 transcript |
 | [Prompt/02. MagicSquare_4x4_TDD_Interactive_Prompt_Transcript.md](Prompt/02.%20MagicSquare_4x4_TDD_Interactive_Prompt_Transcript.md) | 현재 요구 반영 **대화형 실행 프롬프트 export** |
+| [Prompt/03. MagicSquare_CursorRules_UserEntity_Interactive_Prompt_Transcript.md](Prompt/03.%20MagicSquare_CursorRules_UserEntity_Interactive_Prompt_Transcript.md) | Cursor Rules/UserEntity 관련 **대화형 프롬프트 export** |
+| [Prompt/04. MagicSquare_Level1-5_Interactive_Prompt_Transcript.md](Prompt/04.%20MagicSquare_Level1-5_Interactive_Prompt_Transcript.md) | Level 1~5 설계/검증 흐름 **대화형 프롬프트 export** |
 
 ---
 
@@ -266,6 +274,7 @@ MagicSquare_xxx/
 |------|------|------|
 | 1.0 | 2026-05-28 | README 최초 작성 (STEP 1~5 보고서·프롬프트 기반) |
 | 1.1 | 2026-05-28 | 프로젝트 정의/목적/목표 고도화 + 마방진=도메인, 목표=TDD 구현 훈련 방향 통합 + RED-GREEN-REFACTOR 운영 규칙/고정 계약/DoD/불변조건 정합성 반영 |
+| 1.2 | 2026-05-28 | Report/Prompt 문서 목록 최신화 (03, 04 추가) + Level 1~5 통합 검증 보고서 및 Transcript 링크 반영 |
 
 ---
 
