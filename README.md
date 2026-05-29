@@ -5,10 +5,12 @@
 
 | 항목 | 내용 |
 |------|------|
-| **현재 단계** | 문제 정의 완료 + TDD 설계 문서화 완료 |
-| **1차 범위** | 4×4 입력 계약 기반 **해결 결과 산출** |
-| **훈련 초점** | Domain 중심 설계 + Contract-first 테스트 |
-| **상태** | 구현 코드 없이 설계/계약/테스트 계획 완료 → TDD 구현 착수 준비 |
+| **현재 단계** | Dual-Track **GREEN 완료** (Report/09 16건) · REFACTOR **P0 완료** · 커버리지 Gate **부분 충족** |
+| **1차 범위** | 4×4 입력 계약 기반 **해결 결과 산출** (FR-01~05 + Golden Master 회귀) |
+| **훈련 초점** | ECB + Dual-Track TDD + Contract-first 테스트 |
+| **TDD 진행** | `python -m pytest -q` → **70 passed** · RED 스켈레톤 **0건** · GM **17 passed** |
+| **브랜치** | `refactor/refactor` (최신 GREEN: `576ec65`) |
+| **상태** | UIBoundary·Pipeline·Solver **구현** — GUI 셸 + presenter/GUI pytest SSOT ([Report/17](Report/17.%20MagicSquare_TDD_Full_Cycle_Session_Report.md)) |
 
 ---
 
@@ -56,11 +58,11 @@
 
 ## 성공 기준 (Done at Project Level)
 
-- [ ] 고정 계약을 깨는 변경이 없다.
-- [ ] Domain/UI/Data/Integration 테스트 스위트가 모두 통과한다.
-- [ ] 신규 기능 추가 시 기존 테스트 삭제 없이 확장된다.
-- [ ] 리팩토링 커밋 이후에도 결과 포맷과 오류 코드가 유지된다.
-- [ ] README, Report, 테스트 명세 간 불일치가 없다.
+- [x] 고정 계약을 깨는 변경이 없다. *(Golden Master 17 + GM-1 회귀)*
+- [ ] Domain/UI/Data/Integration 테스트 스위트가 **전부** 통과한다. *(현재 70 passed — Data/Integration·U-IN-03·GAP 잔존)*
+- [x] 신규 기능 추가 시 기존 테스트 삭제 없이 확장된다.
+- [x] REFACTOR P0 이후 결과 포맷과 오류 코드가 유지된다. *(Report/15)*
+- [x] README, Report, 테스트 명세 간 불일치가 없다. *(본 README v1.16 동기화)*
 
 ---
 
@@ -136,9 +138,12 @@ flowchart LR
 ### Out of scope (1차)
 
 - 고급 최적화/휴리스틱 탐색
-- 그래픽 UI 화면 구현
 - 원격 DB/네트워크 영속성
 - 3×3, 5×5 등 다른 차수 일반화
+
+### 별도 스프린트 (TDD Track)
+
+- **그래픽 UI** (`boundary/screen/`) — PyQt6 셸 **구현 완료** (크기 검증·샘플 격자·UIBoundary 풀이 연동). `test_gui_invalid_size_message.py`·`test_screen_presenter.py` GREEN. `main_window` PyQt 통합 테스트는 후속. [GUI 실행](#gui-실행) 참고.
 
 ### 합의 전 (TBD)
 
@@ -170,12 +175,32 @@ flowchart LR
 ```
 MagicSquare_xxx/
 ├── README.md                 ← 이 파일 (프로젝트 진입점)
+├── requirements-gui.txt      ← PyQt6 GUI 의존성 (pytest와 분리)
 ├── Report/
 │   └── 01. 4x4_MagicSquare_Problem_Definition_Report.md
 │   └── 02. 4x4_MagicSquare_Dual-Track_TDD_CleanArchitecture_Design_Report.md
 │   └── 03. MagicSquare_CursorRules_and_UserEntity_Implementation_Report.md
 │   └── 04. MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md
 │   └── 05. MagicSquare_AC_FR_01_01_RED_Test_Implementation_Report.md
+│   └── 06. MagicSquare_FR01_FR05_DualTrack_RED_Design_Report.md
+│   └── 09. MagicSquare_DualTrack_RED_Skeleton_Test_Implementation_Report.md
+│   └── 10. MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md
+│   └── 11. MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Report.md
+│   └── 12. MagicSquare_M1_GUI_PyQt_Implementation_Report.md
+│   └── 13. MagicSquare_Golden_Master_Regression_Report.md
+│   └── 14~16. REFACTOR·Coverage Gate
+│   └── 17. MagicSquare_TDD_Full_Cycle_Session_Report.md
+├── boundary/                  ← Boundary (validator, pipeline, UIBoundary, screen)
+│   ├── validator.py, input_validator.py, pipeline.py, ui_boundary.py
+│   ├── schemas.py, constants.py, error_messages.py
+│   └── screen/                # PyQt6 GUI (M1-GUI)
+│       ├── app.py             # python -m boundary.screen.app
+│       ├── main_window.py, presenter.py, sample_grids.py
+├── control/                   ← resolver, solve_partial, factory
+├── entity/                    ← solver + services (blank, missing, validator)
+├── tests/                     ← pytest 70건 + GM 17 (별도 파일 집계)
+│   └── golden_master_expected.txt
+├── docs/                      ← PRD, golden_master_approve_pattern.md
 ├── test_plan.md
 ├── defect_list.md
 └── Prompt/
@@ -184,6 +209,8 @@ MagicSquare_xxx/
     └── 03. MagicSquare_CursorRules_UserEntity_Interactive_Prompt_Transcript.md
     └── 04. MagicSquare_Level1-5_Interactive_Prompt_Transcript.md
     └── 05. MagicSquare_AC_FR_01_01_Interactive_Prompt_Transcript.md
+    └── 06. MagicSquare_FR01_FR05_DualTrack_RED_Design_Interactive_Prompt_Transcript.md
+    └── 12. MagicSquare_M1_GUI_PyQt_Interactive_Prompt_Transcript.md
 ```
 
 | 경로 | 설명 |
@@ -193,13 +220,33 @@ MagicSquare_xxx/
 | [Report/03. MagicSquare_CursorRules_and_UserEntity_Implementation_Report.md](Report/03.%20MagicSquare_CursorRules_and_UserEntity_Implementation_Report.md) | Cursor Rules 반영 + UserEntity 구현 관련 **결과 보고서** |
 | [Report/04. MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md](Report/04.%20MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md) | Level 1~5(Epic/Journey/Story/Scenario/Verification) **통합 검증 보고서** |
 | [Report/05. MagicSquare_AC_FR_01_01_RED_Test_Implementation_Report.md](Report/05.%20MagicSquare_AC_FR_01_01_RED_Test_Implementation_Report.md) | AC-FR-01-01 RED 테스트·실패 분석 **구현 보고서** |
-| [test_plan.md](test_plan.md) | FR-01 입력 크기 검증 **테스트 계획서** |
+| [Report/06. MagicSquare_FR01_FR05_DualTrack_RED_Design_Report.md](Report/06.%20MagicSquare_FR01_FR05_DualTrack_RED_Design_Report.md) | FR-01~FR-05 Dual-Track **RED 설계표** 보고서 |
+| [Report/09. MagicSquare_DualTrack_RED_Skeleton_Test_Implementation_Report.md](Report/09.%20MagicSquare_DualTrack_RED_Skeleton_Test_Implementation_Report.md) | Dual-Track RED **스켈레톤 pytest** 구현 보고서 (24건) |
+| [Report/10. MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md](Report/10.%20MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md) | AC-FR-01-01 **GREEN** 구현 보고서 (9건 통과) |
+| [Report/11. MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Report.md](Report/11.%20MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Report.md) | 분할 GREEN 4커밋·TDD 진행 현황·GUI 검토 **통합 보고서** |
+| [Report/12. MagicSquare_M1_GUI_PyQt_Implementation_Report.md](Report/12.%20MagicSquare_M1_GUI_PyQt_Implementation_Report.md) | M1-GUI PyQt6 셸 **구현 보고서** |
+| [Report/14. MagicSquare_Refactoring_Plan_Report.md](Report/14.%20MagicSquare_Refactoring_Plan_Report.md) | REFACTOR 사전 분석·계획 |
+| [Report/15. MagicSquare_REFACTOR_P0_Implementation_Report.md](Report/15.%20MagicSquare_REFACTOR_P0_Implementation_Report.md) | REFACTOR P0 **구현**·회귀 검증 |
+| [Report/13. MagicSquare_Golden_Master_Regression_Report.md](Report/13.%20MagicSquare_Golden_Master_Regression_Report.md) | Golden Master 회귀 **구현 보고서** |
+| [Report/16. MagicSquare_Coverage_Gate_GREEN_QA_Report.md](Report/16.%20MagicSquare_Coverage_Gate_GREEN_QA_Report.md) | 커버리지 Gate GREEN · QA 분석 **구현 보고서** |
+| [Report/17. MagicSquare_TDD_Full_Cycle_Session_Report.md](Report/17.%20MagicSquare_TDD_Full_Cycle_Session_Report.md) | TDD 전 주기 종합 · Step 0 실측 **세션 보고서** |
+| [test_plan.md](test_plan.md) | FR-01~05 Dual-Track **테스트 계획서** |
 | [defect_list.md](defect_list.md) | RED 단계 **결함 목록** (DEF-001~010) |
 | [Prompt/01. 4x4_MagicSquare_Problem_Definition_Report_Prompt.md](Prompt/01.%204x4_MagicSquare_Problem_Definition_Report_Prompt.md) | 동일 워크플로 **재실행용** 대화형 프롬프트 transcript |
 | [Prompt/02. MagicSquare_4x4_TDD_Interactive_Prompt_Transcript.md](Prompt/02.%20MagicSquare_4x4_TDD_Interactive_Prompt_Transcript.md) | 현재 요구 반영 **대화형 실행 프롬프트 export** |
 | [Prompt/03. MagicSquare_CursorRules_UserEntity_Interactive_Prompt_Transcript.md](Prompt/03.%20MagicSquare_CursorRules_UserEntity_Interactive_Prompt_Transcript.md) | Cursor Rules/UserEntity 관련 **대화형 프롬프트 export** |
 | [Prompt/04. MagicSquare_Level1-5_Interactive_Prompt_Transcript.md](Prompt/04.%20MagicSquare_Level1-5_Interactive_Prompt_Transcript.md) | Level 1~5 설계/검증 흐름 **대화형 프롬프트 export** |
 | [Prompt/05. MagicSquare_AC_FR_01_01_Interactive_Prompt_Transcript.md](Prompt/05.%20MagicSquare_AC_FR_01_01_Interactive_Prompt_Transcript.md) | AC-FR-01-01 RED 테스트 **대화형 프롬프트 export** |
+| [Prompt/06. MagicSquare_FR01_FR05_DualTrack_RED_Design_Interactive_Prompt_Transcript.md](Prompt/06.%20MagicSquare_FR01_FR05_DualTrack_RED_Design_Interactive_Prompt_Transcript.md) | FR-01~FR-05 RED 설계 **대화형 프롬프트 export** |
+| [Prompt/07. MagicSquare_DualTrack_RED_Skeleton_Interactive_Prompt_Transcript.md](Prompt/07.%20MagicSquare_DualTrack_RED_Skeleton_Interactive_Prompt_Transcript.md) | Dual-Track RED 스켈레톤 **대화형 프롬프트 export** |
+| [Prompt/10. MagicSquare_AC_FR_01_01_GREEN_Interactive_Prompt_Transcript.md](Prompt/10.%20MagicSquare_AC_FR_01_01_GREEN_Interactive_Prompt_Transcript.md) | AC-FR-01-01 일괄 GREEN **대화형 프롬프트 export** |
+| [Prompt/11. MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Interactive_Prompt_Transcript.md](Prompt/11.%20MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Interactive_Prompt_Transcript.md) | 분할 GREEN·TDD 진행·GUI 검토 **대화형 프롬프트 export** |
+| [Prompt/12. MagicSquare_M1_GUI_PyQt_Interactive_Prompt_Transcript.md](Prompt/12.%20MagicSquare_M1_GUI_PyQt_Interactive_Prompt_Transcript.md) | M1-GUI PyQt6 구현·실행 **대화형 프롬프트 export** |
+| [Prompt/14. MagicSquare_Refactoring_Plan_Interactive_Prompt_Transcript.md](Prompt/14.%20MagicSquare_Refactoring_Plan_Interactive_Prompt_Transcript.md) | REFACTOR 계획 **대화형 프롬프트 export** |
+| [Prompt/15. MagicSquare_REFACTOR_P0_Interactive_Prompt_Transcript.md](Prompt/15.%20MagicSquare_REFACTOR_P0_Interactive_Prompt_Transcript.md) | REFACTOR P0 구현 **대화형 프롬프트 export** |
+| [Prompt/13. MagicSquare_Golden_Master_Regression_Interactive_Prompt_Transcript.md](Prompt/13.%20MagicSquare_Golden_Master_Regression_Interactive_Prompt_Transcript.md) | Golden Master **대화형 프롬프트 export** |
+| [Prompt/16. MagicSquare_Coverage_Gate_GREEN_Interactive_Prompt_Transcript.md](Prompt/16.%20MagicSquare_Coverage_Gate_GREEN_Interactive_Prompt_Transcript.md) | 커버리지 Gate GREEN · QA **대화형 프롬프트 export** |
+| [Prompt/17. MagicSquare_TDD_Full_Cycle_Interactive_Prompt_Transcript.md](Prompt/17.%20MagicSquare_TDD_Full_Cycle_Interactive_Prompt_Transcript.md) | TDD 전 주기 Export **대화형 프롬프트 export** |
 
 ---
 
@@ -238,62 +285,473 @@ MagicSquare_xxx/
 ### 사이클 운영 규칙
 
 - 한 사이클에는 하나의 학습 목표만 포함한다. (예: 입력 검증, 순서 정책)
+- **RED 커밋**: 설계 묶음 1개당 실패 테스트 1커밋.
+- **GREEN 커밋**: 대응 RED 묶음 1개당 최소 구현 1커밋. **REFACTOR는 같은 커밋에 포함하지 않는다.**
 - 커밋 단위는 `RED -> GREEN -> REFACTOR` 흐름을 추적 가능하게 유지한다.
 - 계약 변경이 필요한 경우, 먼저 테스트/문서를 갱신한 뒤 구현을 수정한다.
+
+### 설계 묶음 vs 커밋 묶음
+
+| 구분 | 의미 | AC-FR-01-01 예 |
+|------|------|----------------|
+| **설계 묶음** | `test_plan` / Report/05의 TA-RED 단위 (기능·테스트 추적) | R-05-01 ~ R-05-05 (5묶음) |
+| **커밋 묶음** | git에 실제로 남긴 RED/GREEN 커밋 단위 | GREEN **4커밋** (아래 표) |
+
+> Report/05 최초 RED는 9건 **1커밋**(`352cd24`), 최초 GREEN도 **1커밋**(`aa10473`)이었음.  
+> 이후 `stabilize/green` 브랜치에서 **RED 묶음별 GREEN 4커밋**으로 재적용함 (`bc022cb` ~ `d0fe1e2`).
 
 ---
 
 ## RED 단계 To-Do 리스트
 
-> 이 체크리스트는 test_plan.md 기반으로 생성되었습니다.
-> 각 항목은 RED(실패 테스트 작성) 완료 시 체크합니다.
+> Track A/B 체크리스트·커버리지 목표·`defect_list.md` 연결은 [TDD 진행 현황](#tdd-진행-현황-red-묶음--green-목표) 및 `test_plan.md`를 참고한다.
 
-### Track A — UI / Boundary 테스트
-- [ ] TC-A-01: grid=None 입력 → 실패 결과 반환 (Happy Path of Failure)
-- [ ] TC-A-02: code가 정확히 "INVALID_SIZE" 문자열인지 검증
-- [ ] TC-A-03: message가 "Grid must be 4x4." 와 문자 단위 동일한지 검증
-- [ ] TC-A-04: grid=None 시 Domain 진입점 0회 호출 (mock/spy 검증)
-- [ ] TC-A-05: grid=[] 빈 리스트 → 실패 결과 반환
-- [ ] TC-A-06: grid=3×4 크기 불일치 → 실패 결과 반환
-- [ ] TC-A-07: 반환 객체 타입이 지정 실패 결과 구조체인지 검증
+## Golden Master 회귀 안전장치
 
-### Track B — Domain / Logic 테스트
-- [ ] TC-B-01: resolve()가 None grid를 직접 받지 않음을 격리 검증
-- [ ] TC-B-02: Boundary가 None 분기를 처리 후 resolve() 미호출 확인
-- [ ] TC-B-03: resolve() mock이 호출됐을 경우 테스트 실패 처리
-- [ ] TC-B-04: AC-FR-01-02~05 범위의 케이스는 이 커밋에 포함하지 않음 확인
+Refactoring 시작 전 구축.  
+GREEN 완료 후 즉시 적용.
+
+### 기준 파일 생성
+
+- GM-01: `golden_master_expected.txt` 생성
+- GM-02: 정상/역순/오류 시나리오 추가
+- GM-03: `git add tests/golden_master_expected.txt`
+
+### 테스트 코드
+
+- GM-04: `test_golden_master_magic_square` 작성
+- GM-05: approve 패턴 적용
+- GM-06: Golden Master 테스트 PASS 확인
+
+```powershell
+python -m pytest tests/test_golden_master_magic_square.py -m golden_master -v
+# → 17 passed (GM-TC-01~05 + 계약 검증)
+```
+
+### 회귀 보호
+
+- GM-07: row-major 규칙 보호
+- GM-08: 1-index 출력 보호
+- GM-09: reverse 조합 fallback 보호
+- GM-10: Error Contract 보호
+
+> 상세 approve 패턴·시나리오 정의: `docs/golden_master_approve_pattern.md`
+
+---
+
+## REFACTOR To-Do 리스트
+
+> **SSOT:** [Report/14](Report/14.%20MagicSquare_Refactoring_Plan_Report.md) (계획) · [Report/15](Report/15.%20MagicSquare_REFACTOR_P0_Implementation_Report.md) (P0 구현)  
+> **회귀 안전망 (매 커밋):** **70 passed** + Golden Master 17  
+> **실행 순서:** C(P0) → A(P0) → B(P0) → A(P1)+B(P1) → C(P1) → B(P2)
+
+### 그룹 C — 테스트·기반 시설
+
+**목표:** pytest 수집 복구 → 리팩토링 후 회귀 검증 가능 상태
+
+#### P0 — 수집 오류 복구
+
+- [x] `tests/entity/test_d_mis_01_missing_numbers.py` — `missing_number_finder` → `missing_numbers` import 정렬
+- [x] `tests/entity/test_d_sol_01_04_solution.py` — `control.solver` → `entity.solver` import 정렬
+- [x] `tests/boundary/test_u_flow_02_execute_zero_calls.py` — `ui_boundary`·`solve_partial` 구현 후 import 연결
+- [x] `tests/boundary/test_u_out_01_03_output_contract.py` — `ui_boundary` 구현 후 import 연결
+- [x] `pytest tests/` — collection error **0건** 확인
+
+#### P1 — RED 스켈레톤 GREEN 전환
+
+> 진행 SSOT: [커버리지 Gate To-Do](#커버리지-gate-to-do)
+
+- [x] `test_u_in_04_08_input_validation.py` — U-IN-04~08 (5건) → Gate ③
+- [x] `test_d_loc_01_blank_coords.py` — D-LOC-01 (1건) + D-LOC-02
+- [x] `test_d_val_01_06_magic_square.py` — D-VAL-01~06 (6건)
+- [x] `test_d_mis_01_missing_numbers.py` — D-MIS-01 (1건) + D-MIS-02 *(P1 Track B)*
+- [x] `test_d_sol_01_04_solution.py` — D-SOL-01~04 (4건) → Gate ②
+- [x] `test_u_flow_02_execute_zero_calls.py` — U-FLOW-02 (4건) → Gate ④
+- [x] `test_u_out_01_03_output_contract.py` — U-OUT-01~03 (3건) → Gate ⑤
+- [x] `test_screen_presenter.py` — ScreenPresenter 계약 (7건, PyQt 불필요)
+- [x] `test_gui_invalid_size_message.py` — GUI INVALID_SIZE SSOT (Report/12)
+- [x] `test_error_messages.py` — envelope fallback
+- [x] `test_resolver_happy_path.py` · `test_factory.py` — Control happy path
+
+#### 회귀 기준 (리팩토링 대상 아님 — 매 커밋 검증)
+
+- [x] AC-FR-01-01 9건 (boundary 7 + control 2)
+- [x] Golden Master 17건
+
+---
+
+### 그룹 A — 아키텍처·의존성 정렬 (ECB)
+
+**목표:** 레이어 경계 복원, GUI·Pipeline 단일 풀이 경로 확립
+
+**목표 흐름:** `Screen → UIBoundary → SolvePartialMagicSquare → entity/services/*`
+
+#### P0
+
+- [x] `boundary/ui_boundary.py` — `UIBoundary` Facade (validate/solve; envelope E001~E007 후속)
+- [x] `control/solve_partial.py` — `execute` + `NoValidAssignmentError` 매핑
+- [x] `boundary/screen/presenter.py`, `main_window.py` — UIBoundary 위임, Control 직접 import 제거
+- [x] `boundary/pipeline.py` — `control/pipeline` → boundary 이동, Golden Master import 갱신
+- [x] `boundary/input_validator.py` — `boundary→entity` 제거 (`boundary.constants` 사용)
+
+#### P1
+
+- [ ] `entity/solver.py` — Entity/Control 혼재 해소 → `two_cell_solver` 추출
+- [ ] `control/resolver.py` — E001 Control·Boundary 이중 책임 정리 (Collapse Hierarchy)
+
+---
+
+### 그룹 B — 책임·계약·코드 품질 (SRP / DTO / VO)
+
+**목표:** 단일 책임 정리, 오류·출력 계약 통합 (E001~E007·int[6] 불변)
+
+#### P0
+
+- [x] `boundary/validator.py` — `NotImplementedError` → `ErrorResponse | None` 반환
+- [x] `boundary/pipeline.py` — size 검증 예외 흐름 제거
+- [x] `boundary/screen/presenter.py` — `NotImplementedError` catch 제거
+
+#### P1
+
+- [ ] `boundary/input_validator.py` — 검증 + ErrorResponse envelope 역할 분리
+- [ ] `control/resolver.py`, `boundary/validator.py` — `ErrorResponse`/`ResolveError`, `INVALID_SIZE` DTO 통합
+- [ ] `entity/solver.py`, `presenter.py` — `int[6]` primitive → `Solution` Value Object
+- [ ] `boundary/screen/main_window.py` — View + fixture 주입 분리
+
+#### P2
+
+- [ ] `entity/constants.py`, `boundary/constants.py`, `boundary/screen/` — `GRID_SIZE` 등 상수 SSOT 통합
+- [ ] `entity/services/magic_square_validator.py` — 단일 함수 다중 불변식 Extract Method
+- [ ] `entity/solver.py` — 4×4 `deepcopy` 단순화
+- [ ] `entity/user.py` — 도메인 무관 코드 정리 (Move Class / Remove Dead Code)
+
+---
+
+### REFACTOR Go/No-Go
+
+- [x] `pytest tests/` — collection error 0건
+- [x] **70 passed** + Golden Master 17 PASS ([Report/16](Report/16.%20MagicSquare_Coverage_Gate_GREEN_QA_Report.md))
+- [x] AC-FR-01-01 9건 PASS
+- [x] ECB 역의존 import 0건 (`boundary→entity`, `control→boundary`, Screen→Control)
+- [x] RED 스켈레톤 16건 → **0건** (70 passed, 2026-05-29)
+- [ ] E001~E007 code/message, int[6] 계약 불변
+- [ ] GUI 수동 체크 — `python -m boundary.screen.app` INVALID_SIZE 메시지 SSOT 일치
+
+---
+
+## 로컬 실행 (현재 구현 범위)
+
+### 환경 준비
+
+```powershell
+cd c:\dev\MagicSquare_xxx
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install pytest pydantic pytest-cov
+```
+
+GUI 실행 시 추가:
+
+```powershell
+pip install -r requirements-gui.txt
+```
+
+### pytest — 전체 회귀 (SSOT)
+
+```powershell
+python -m pytest -q
+# → 70 passed
+
+python -m pytest tests/test_golden_master_magic_square.py -q
+# → 17 passed
+```
+
+### pytest — AC-FR-01-01만
+
+```powershell
+python -m pytest tests/boundary/test_ac_fr_01_01_matrix_size.py tests/control/test_ac_fr_01_01_domain_isolation.py -v
+# → 9 passed
+```
+
+### GUI — PyQt6 앱 실행
+
+```powershell
+python -m boundary.screen.app
+```
+
+창 제목 **MagicSquare — 4×4 마방진**이 표시됩니다.
+
+### Python — Boundary 계약 직접 호출 (GUI 없이 확인)
+
+현재 구현으로 **터미널에서 즉시 실행** 가능한 범위는 크기 검증뿐입니다.
+
+```powershell
+python -c "from boundary import BoundaryValidator; r=BoundaryValidator().validate(None); print(r.code, r.message)"
+# INVALID_SIZE Grid must be 4x4.
+```
+
+유효 4×4 격자는 `UIBoundary`·`MagicSquarePipeline` 경로로 풀이 가능 (D-SOL GREEN, GM-TC-01~05). 크기 오류만 단독 확인 시 `BoundaryValidator`만 호출하면 됩니다.
+
+---
+
+## GUI 실행
+
+### 현재 상태
+
+| 항목 | 상태 |
+|------|------|
+| `boundary/screen/` | ✅ PyQt6 GUI 셸 구현 |
+| `requirements-gui.txt` | ✅ PyQt6>=6.6.0 (pytest와 분리) |
+| `python -m boundary.screen.app` | ✅ 실행 가능 |
+| `boundary/ui_boundary.py` (`UIBoundary`) | ✅ validate/solve Facade |
+| pytest 전체 | **70 passed** — AC-FR-01-01 9건 + Dual-Track + 보조 |
+| GUI pytest | ✅ `test_gui_invalid_size_message.py`, `test_screen_presenter.py` (PyQt 불필요) |
+| `main_window` 통합 | ⏳ `pytest-qt` optional |
+
+### ECB 구조 (구현됨 — Report/15 P0)
+
+```text
+boundary/screen/main_window.py
+    ↓
+boundary/screen/presenter.py
+    ↓
+boundary/ui_boundary.py
+    ↓
+boundary/pipeline.py
+    ↓
+control/solve_partial.py
+    ↓
+entity/solver.py → entity/services/*
+```
+
+- **screen → entity / control 직접 import 금지** — `presenter`는 `UIBoundary`만 사용
+- **control/entity에 PyQt import 금지** — UI는 `boundary/screen/`에만
+- GUI는 **비즈니스 로직을 복제하지 않고** `BoundaryValidator.validate()` SSOT 호출
+
+### GUI 기능
+
+| 영역 | 내용 |
+|------|------|
+| **입력** | 4×4 `QSpinBox` (0~16, 0=빈칸) |
+| **샘플** | G0(완성), G1(small-first), G2(reverse), 빈 격자 — Report/06 §5 |
+| **크기 검증** | `BoundaryValidator` — pytest와 동일 `INVALID_SIZE` 메시지 |
+| **검증 시나리오** | 현재 격자 / null / `[]` / 3×4 |
+| **풀이** | `UIBoundary.solve` — G1/G2/G3 시나리오 (GM SSOT) |
+| **결과** | 상태 라벨 · 상세 텍스트 · 풀이 후 격자 미리보기 |
+
+### 수동 확인 체크리스트
+
+- [ ] `python -m boundary.screen.app` — 창 표시
+- [ ] 검증 시나리오 `null` → `Grid must be 4x4.` (pytest `INVALID_SIZE_MESSAGE`와 동일)
+- [ ] 샘플 G1 로드 → 크기 검증 통과
+- [ ] G1 풀이 → `int[6]` 및 채워진 격자 표시 (GM-TC-01)
+- [x] AC-FR-01-01 pytest 9건 PASS · 전체 `pytest -q` 70 passed
+
+### GUI에서 보여줄 수 있는 것 / 없는 것
+
+| 입력·동작 | GUI 표시 | 백엔드 |
+|-----------|----------|--------|
+| null / `[]` / 3×4 (검증 시나리오) | `[INVALID_SIZE] Grid must be 4x4.` | ✅ `BoundaryValidator` |
+| 유효 4×4 + 크기 검증 | `Grid size is valid (4×4).` | ✅ |
+| G1 + 풀이 | 성공/실패 메시지·격자 | ✅ `UIBoundary` + D-SOL GREEN |
+| 빈칸 3개 등 | `INVALID_BLANK_COUNT` 등 | ✅ U-IN-04~08 GREEN |
+| G1 성공 `int[6]` | 풀이 후 격자 채움 | ✅ GM-TC-01 SSOT |
+
+### GUI TDD 후속 (권장)
+
+| 순서 | 작업 | 커밋 예 |
+|:---:|------|---------|
+| 1 | ~~GUI INVALID_SIZE SSOT pytest~~ | ✅ `test_gui_invalid_size_message.py` |
+| 2 | ~~ScreenPresenter 계약~~ | ✅ `test_screen_presenter.py` |
+| 3 | `main_window` PyQt 통합 (`pytest-qt`) | optional CI |
+
+GUI는 **AC-FR-01-01 GREEN 4커밋과 분리**하는 것이 원칙입니다 (기능 GREEN 커밋에 PyQt 섞지 않음).
+
+---
+
+## TDD 진행 현황 (RED 묶음 · GREEN 목표)
+
+> **요약 (2026-05-29):** Report/05 AC-FR-01-01 **9건 GREEN** · Report/09 스켈레톤 **16건 GREEN** ([Report/16](Report/16.%20MagicSquare_Coverage_Gate_GREEN_QA_Report.md)).  
+> `python -m pytest -q` → **70 passed, 0 failed**. 잔여: U-IN-03, R-05-GAP, REFACTOR P1, `main_window` PyQt 통합.
+
+### AC-FR-01-01 GREEN 커밋 이력 (`stabilize/green`)
+
+| 커밋 | 묶음 | test_plan | 통과 테스트 |
+|------|------|-----------|-------------|
+| `bc022cb` | green-1 | TA-RED-001 | `test_none_grid_returns_invalid_size_code_message` |
+| `f1e6632` | green-2 | TA-RED-002~004 | `test_empty_list_grid_...`, `test_four_empty_rows_...`, `test_3x4_grid_...` |
+| `6ac6430` | green-3 | TA-RED-009 + 메시지 | `test_none_grid_message_exact_match_...`, `test_none_grid_returns_error_response_struct_type` |
+| `d0fe1e2` | green-4 | TA-RED-007~008 | `test_none_grid_resolve_called_zero_times_...`, `test_none_grid_resolve_mock_invocation_...` |
+
+메타 테스트 `test_scope_excludes_...` (R-05-05)는 프로덕션 코드 없이 PASS — 별도 GREEN 커밋 없음.
+
+### 진행률
+
+| 구분 | 설계 묶음 GREEN | 테스트 (대표) | 비고 |
+|------|:---------------:|:-------------:|------|
+| Report/05 — AC-FR-01-01 | 5 / 7 | 9 / 11 | GREEN 커밋 4개 (`bc022cb`~`d0fe1e2`) |
+| Report/09 — Dual-Track | **12 / 12** | **24 / 24** | 스켈레톤 16건 본문 GREEN + 보조 11 |
+| test_plan 갭 | 0 / 2 | — | R-05-GAP-A/B 미작성 |
+| **pytest 합계** | — | **70 passed** | GM 17은 동일 파일 스위트 내 |
+
+*상세 추적: [Report/17](Report/17.%20MagicSquare_TDD_Full_Cycle_Session_Report.md) §2.*
+
+### 회귀 기준선 (항상 GREEN 유지)
+
+```powershell
+python -m pytest tests/boundary/test_ac_fr_01_01_matrix_size.py tests/control/test_ac_fr_01_01_domain_isolation.py -q
+# → 9 passed (2026-05-29 기준)
+```
+
+### Report/05 — AC-FR-01-01 RED 묶음 (U-IN-01~02 대응)
+
+| 묶음 ID | test_plan | 테스트 수 | RED | GREEN | 검증 내용 |
+|---------|-----------|:---------:|:---:|:---:|-----------|
+| **R-05-01** | TA-RED-001 | 1 | ✅ | ✅ | `grid=None` → `INVALID_SIZE` |
+| **R-05-02** | TA-RED-002~004 | 3 | ✅ | ✅ | `[]`, `[[]]*4`, 3×4 → `INVALID_SIZE` |
+| **R-05-03** | TA-RED-009 + 메시지 | 2 | ✅ | ✅ | `ErrorResponse` 타입, message 바이트 동일 |
+| **R-05-04** | TA-RED-007~008 | 2 | ✅ | ✅ | 크기 오류 시 `solver.resolve` 0회 |
+| **R-05-05** | (메타) | 1 | ✅ | ✅ | AC-FR-01-02~05·FR-02~05 범위 제외 확인 |
+| R-05-GAP-A | TA-RED-005~006 | — | ❌ | ❌ | 4×3, 5×5 — **RED 테스트 미작성** |
+| R-05-GAP-B | TA-RED-010 | — | ❌ | ❌ | 결정성(NFR-03) — **RED 테스트 미작성** |
+
+**구현 산출물**: `boundary/validator.py`, `boundary/schemas.py`, `control/resolver.py`, `entity/solver.py` (스텁) — [Report/10](Report/10.%20MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md)  
+**GUI 산출물**: `boundary/screen/`, `control/factory.py`, `requirements-gui.txt` — [Report/12](Report/12.%20MagicSquare_M1_GUI_PyQt_Implementation_Report.md)
+
+### Report/09 — Dual-Track RED 묶음 (Logic + UI)
+
+Track B(Logic)를 먼저, FR-05에서 U-OUT과 짝을 맞춥니다. 각 행 = **RED 1묶음 → GREEN 1커밋** 목표.
+
+| 묶음 ID | Test ID | Track | FR | 테스트 수 | RED | GREEN | 다음 GREEN 커밋 메시지 예 |
+|---------|---------|:-----:|:--:|:---------:|:---:|:---:|---------------------------|
+| **R-09-B01** | D-LOC-01 | B | FR-02 | 1 | ✅ | ✅ | `feat(green): D-LOC-01 blank coords G1` |
+| **R-09-B02** | D-MIS-01 | B | FR-03 | 1 | ✅ | ✅ | `feat(green): D-MIS-01 missing numbers G1` |
+| **R-09-B03** | D-VAL-01 | B | FR-04 | 1 | ✅ | ✅ | `feat(green): D-VAL-01 is_magic_square true` |
+| **R-09-B04** | D-VAL-02~06 | B | FR-04 | 5 | ✅ | ✅ | `feat(green): D-VAL-02~06 is_magic_square false cases` |
+| **R-09-B05** | D-SOL-01 | B | FR-05 | 1 | ✅ | ✅ | `feat(green): D-SOL-01 G1_SOL small-first` |
+| **R-09-B06** | D-SOL-02 | B | FR-05 | 1 | ✅ | ✅ | `feat(green): D-SOL-02 G2 reverse` |
+| **R-09-B07** | D-SOL-03 | B | FR-05 | 1 | ✅ | ✅ | `feat(green): D-SOL-03 G3 unsolvable` |
+| **R-09-B08** | D-SOL-04 | B | FR-05 | 1 | ✅ | ✅ | `feat(green): D-SOL-04 output length and 1-index` |
+| **R-09-A01** | U-IN-04 | A | FR-01 | 1 | ✅ | ✅ | `feat(green): U-IN-04 INVALID_BLANK_COUNT` |
+| **R-09-A02** | U-IN-05 | A | FR-01 | 1 | ✅ | ✅ | `feat(green): U-IN-05 VALUE_OUT_OF_RANGE` |
+| **R-09-A03** | U-IN-06 | A | FR-01 | 1 | ✅ | ✅ | `feat(green): U-IN-06 DUPLICATE_NON_ZERO_VALUE` |
+| **R-09-A04** | U-IN-07 | A | FR-01 | 1 | ✅ | ✅ | `feat(green): U-IN-07 no blanks` |
+| **R-09-A05** | U-IN-08 | A | FR-01 | 1 | ✅ | ✅ | `feat(green): U-IN-08 G1 valid input pass` |
+| **R-09-A06** | U-FLOW-02 | A | FR-01 | 4 | ✅ | ✅ | `feat(green): U-FLOW-02 invalid execute 0 calls` |
+| **R-09-A07** | U-OUT-01 | A | FR-05 | 1 | ✅ | ✅ | `feat(green): U-OUT-01 success envelope` |
+| **R-09-A08** | U-OUT-02 | A | FR-05 | 1 | ✅ | ✅ | `feat(green): U-OUT-02 1-index coords` |
+| **R-09-A09** | U-OUT-03 | A | FR-05 | 1 | ✅ | ✅ | `feat(green): U-OUT-03 G3 failure envelope` |
+
+**범례**: ✅ 완료 · 🟡 RED 스켈레톤(`pytest.fail`)만 존재 · ❌ 미작성 또는 GREEN 미착수
+
+**Report/09 상태 (2026-05-29):** 스켈레톤 16건 **GREEN 완료** — `pytest -q` **70 passed**. 상세: [Report/16](Report/16.%20MagicSquare_Coverage_Gate_GREEN_QA_Report.md).
+
+**Report/06 설계 대비 갭**
+
+| Test ID | 비고 |
+|---------|------|
+| U-IN-01, U-IN-02 | Report/05 `test_ac_fr_01_01_*`로 **대체·GREEN 완료** (`INVALID_SIZE` 계약) |
+| U-IN-03 | 빈칸 1개 → E002 — **RED·GREEN 모두 미작성** |
+| G3 격자 | ✅ GM-TC-05 SSOT (`tests/entity/grids.py` `GRID_G3`) |
+| D-SOL-01 기대값 | Report/06 `[2,2,7,3,3,10]` → GM-TC-01 `[1,2,2,1,3,3]` (`GRID_G1_SOL`) |
+
+### 작업 진행 목표 (마일스톤)
+
+| 마일스톤 | 목표 | 상태 |
+|----------|------|------|
+| **M1** | AC-FR-01-01 크기 검증 RED→GREEN (Report/05, **4 GREEN 커밋**) | ✅ 완료 (9건) |
+| **M1-GUI** | Boundary 크기 오류 GUI 표시 (`boundary/screen/`) | ✅ 셸 + presenter/GUI SSOT pytest |
+| **M2** | Track B Logic GREEN — D-LOC → D-MIS → D-VAL → D-SOL | ✅ 완료 ([Report/16](Report/16.%20MagicSquare_Coverage_Gate_GREEN_QA_Report.md)) |
+| **M3** | Track A UI GREEN — U-IN-04~08, U-FLOW-02 (short-circuit) | ✅ 완료 |
+| **M4** | FR-05 Dual-Track — U-OUT-01~03 (D-SOL 이후) | ✅ 완료 |
+| **M5** | test_plan 갭 — 4×3·5×5·결정성 RED+GREEN | ⏳ |
+| **M6** | REFACTOR 시리즈 — [REFACTOR To-Do](#refactor-to-do-리스트) (ECB·SRP·테스트 3그룹) · **GREEN 커밋과 분리** | ⏳ P0 완료 · P1 잔존 |
+| **M7** | 전체 회귀 + 커버리지 (Boundary/Control ≥85%, Entity ≥95%) | ✅ **부분** — Entity **97%** · Control **100%** · Boundary core **~98%** · 전역 **55%** |
 
 ### 커버리지 목표
-- [ ] Domain Logic: 95%+ (pip install pytest-cov)
-- [ ] Boundary Layer: 85%+
-- [ ] 전체 TOTAL: 90%+
+
+- [x] Domain Logic: 95%+ (`pytest --cov=entity`) — **97%** (Step 0, Report/17)
+- [x] Boundary Layer: 85%+ — 계약 core **~98%** *(screen 제외)*
+- [x] Control Layer: 85%+ — **100%**
+- [x] AC-FR-01-01 회귀 9건 상시 GREEN
 
 ### 결함 목록 연결
-- [x] defect_list.md 생성 및 발견 결함 기록
-- [ ] 모든 결함 수정 후 회귀 테스트 통과 확인
+
+- [x] defect_list.md 생성 및 RED 단계 결함 기록
+- [x] Report/05 DEF-001~009 — AC-FR-01-01 GREEN으로 해소 (문서 갱신 권장)
+- [x] Report/09 스켈레톤 16건 GREEN — **70 passed** ([Report/16](Report/16.%20MagicSquare_Coverage_Gate_GREEN_QA_Report.md))
+
+---
+
+## 커버리지 Gate To-Do
+
+> **SSOT:** [Report/16](Report/16.%20MagicSquare_Coverage_Gate_GREEN_QA_Report.md) · QA 커버리지 분석 (2026-05-29) · `test_plan.md` §7 · PRD NFR-01~03  
+> **회귀 안전망 (매 항목 완료 후):** **70 passed** + Golden Master 17  
+> **측정 경로:** `entity/`, `boundary/`, `control/` (repo 루트 — `src/` 없음)  
+> **실행 순서:** ① → ② → ③ → ④ → ⑤ → ⑥ (의존성 순)
+
+### ① G3 unsolvable 격자 SSOT (선행)
+
+- [x] `tests/entity/grids.py` — `GRID_G3` = GM-TC-05 (양 조합 실패 격자)
+- [x] `GRID_G1_SOL` 추가 — GM-TC-01 small-first 성공 격자
+
+> Report/06 G1은 D-LOC/D-MIS/U-IN-08용 유지. D-SOL-01은 `GRID_G1_SOL` + `[1,2,2,1,3,3]`.
+
+### ② D-SOL GREEN + Domain ≥ 95% gap (Track B)
+
+- [x] `test_d_sol_01_04_solution.py` — D-SOL-01~04 (4건)
+- [ ] `test_d_val_01_06_magic_square.py` — D-VAL 대각선 L39/L42 *(4×4 row·col=34이면 대각도 34 — 격리 불가)*
+- [x] `test_d_loc_01_blank_coords.py` — D-LOC-02
+- [x] `test_d_mis_01_missing_numbers.py` — D-MIS-02
+
+**Gate:** entity **97%** ✅
+
+### ③ U-IN GREEN (Track A — FR-01)
+
+- [x] `boundary/input_validator.py` — `VALUE_OUT_OF_RANGE`
+- [x] `test_u_in_04_08_input_validation.py` — U-IN-04~08 (5건)
+
+### ④ U-FLOW GREEN (Track A — AC-FR01-05)
+
+- [x] `test_u_flow_02_execute_zero_calls.py` — U-FLOW-02 (4건)
+
+### ⑤ U-OUT GREEN (Track A — FR-05)
+
+- [x] `test_u_out_01_03_output_contract.py` — U-OUT-01~03 (3건)
+
+### ⑥ Gate 재검증 + GUI 계약 (Report/12)
+
+- [x] `python -m pytest -q` → **70 passed, 0 failed**
+- [x] Entity **97%** · Control **100%** · Boundary 계약 core **~98%**
+- [x] Golden Master 17 + GM-1 PASS
+- [x] `test_gui_invalid_size_message.py` · `test_screen_presenter.py` (PyQt 불필요)
+- [ ] `main_window.py` PyQt 통합 테스트 *(PyQt6 + `pytest-qt` 필요, CI optional)*
+- [ ] 전역 ≥ 80% *(screen/main_window 188 stmts — PyQt 환경 또는 omit)*
 
 ---
 
 ## 다음 단계 (권장 실행 순서)
 
-현재 기준의 권장 실행 순서는 다음과 같습니다.
-
-1. Domain RED: 입력 계약/불변조건/순서 정책 테스트 작성  
-2. Domain GREEN/REFACTOR: 최소 구현 후 구조 정리  
-3. UI Boundary RED: 입력 오류/출력 포맷/오류 메시지 테스트 작성  
-4. Data RED: InMemory 저장/로드 정합성 테스트 작성  
-5. Integration RED: UI -> Domain -> Data 경로 테스트 작성  
-6. 각 레이어별 GREEN/REFACTOR 반복 후 전체 회귀 테스트 고정
+1. ~~**G3 unsolvable 격자 확정**~~ → [커버리지 Gate To-Do ①](#-g3-unsolvable-격자-ssot-선행)
+2. ~~**`test_gui_*.py` RED**~~ — ✅ `test_gui_invalid_size_message.py` + `test_screen_presenter.py` (PyQt 불필요)
+3. ~~**R-09-B01** D-LOC-01~~ — ✅ 완료
+4. ~~R-09-B04 → B05~B08 Logic GREEN~~ → [Gate To-Do ②③](#-d-sol-green--domain--95-gap-track-b)
+5. ~~R-09-A01~A06 FR-01 UI 잔여~~ → [Gate To-Do ③④](#-u-in-green-track-a--fr-01)
+6. ~~R-09-A07~A09 FR-05 출력 계약~~ → [Gate To-Do ⑤](#-u-out-green-track-a--fr-05-③④-이후)
+7. R-05-GAP-A/B — 4×3·5×5·결정성 RED 작성 후 GREEN
+8. REFACTOR 전용 커밋 (API `INVALID_SIZE` ↔ `E001~E005` 통합 등)
+9. Data / Integration RED — 별도 스프린트
 
 ---
 
 ## Definition of Done (구현 단계)
 
-- [ ] 입력/출력 고정 계약 테스트가 모두 통과한다.
-- [ ] Domain/UI/Data/Integration 테스트가 모두 그린이다.
+- [x] 입력/출력 고정 계약 테스트가 모두 통과한다. *(70 passed, U-IN-03·GAP 제외)*
+- [x] Domain/UI Track B·A RED 스켈레톤이 GREEN이다. *(Report/09 16건)*
+- [ ] Domain/UI/Data/Integration **전체** 그린 *(U-IN-03, R-05-GAP, PyQt main_window 잔존)*
 - [ ] 리팩토링 후에도 계약 형식과 오류 코드가 유지된다.
 - [ ] 기존 테스트 삭제 없이 회귀 테스트 세트가 유지된다.
-- [ ] README/Report와 실제 테스트 규칙이 불일치하지 않는다.
+- [x] README/Report와 실제 테스트 규칙이 불일치하지 않는다. *(Report/16·17, G1_SOL SSOT, 2026-05-29 실측)*
 
 ---
 
@@ -315,7 +773,20 @@ MagicSquare_xxx/
 | 1.1 | 2026-05-28 | 프로젝트 정의/목적/목표 고도화 + 마방진=도메인, 목표=TDD 구현 훈련 방향 통합 + RED-GREEN-REFACTOR 운영 규칙/고정 계약/DoD/불변조건 정합성 반영 |
 | 1.2 | 2026-05-28 | Report/Prompt 문서 목록 최신화 (03, 04 추가) + Level 1~5 통합 검증 보고서 및 Transcript 링크 반영 |
 | 1.3 | 2026-05-29 | AC-FR-01-01 RED 테스트 보고서(05)·Transcript(05)·test_plan.md 링크 반영 |
+| 1.4 | 2026-05-29 | FR-01~FR-05 Dual-Track RED 설계 보고서(06)·Transcript(06) 링크 반영 |
+| 1.5 | 2026-05-29 | Dual-Track RED 스켈레톤 구현 보고서(09)·Transcript(07) 링크 반영 |
+| 1.6 | 2026-05-29 | AC-FR-01-01 GREEN(Report/10) 반영 · RED 묶음별 진행 현황·마일스톤·저장소 구조 갱신 |
+| 1.7 | 2026-05-29 | GREEN 4커밋 이력·설계/커밋 묶음 구분·로컬 실행·GUI 검토 섹션 추가 |
+| 1.8 | 2026-05-29 | Report/11·Prompt/11 링크 반영 (분할 GREEN·TDD 진행 세션) |
+| 1.9 | 2026-05-29 | M1-GUI PyQt6 셸 구현·GUI 실행 섹션·Report/12·Prompt/12·`requirements-gui.txt` 반영 |
+| 1.10 | 2026-05-29 | Golden Master 회귀 안전장치(GM-01~10) 섹션 추가 — `test_golden_master_magic_square.py`·`golden_master_expected.txt` |
+| 1.11 | 2026-05-29 | REFACTOR To-Do 리스트 추가 — Report/14 기반 3그룹(A ECB · B SRP/계약 · C 테스트) 체크리스트 |
+| 1.12 | 2026-05-29 | 그룹 C P0 완료(수집 0건)·P1 Track B 8건 GREEN — `ui_boundary`, `solve_partial`, `tests/entity/grids.py` |
+| 1.13 | 2026-05-29 | ECB 리팩터(9d3250b)·size 검증 Result Type(2번째 커밋) — pipeline boundary 이동, Screen→UIBoundary |
+| 1.14 | 2026-05-29 | Report/15·Prompt/15 — REFACTOR P0 구현 보고서·Transcript export |
+| 1.15 | 2026-05-29 | Report/16·Prompt/16 — 커버리지 Gate GREEN · QA 분석 · RED 16→0 · 70 passed · M2~M4·M7 Gate 갱신 |
+| 1.16 | 2026-05-29 | Report/17·Prompt/17 — TDD 전 주기 종합 Export · README 상단·GUI·진행률·ECB 흐름 전면 동기화 (70 passed SSOT) |
 
 ---
 
-*본 README는 학습 방향과 실행 순서를 정의합니다. 실제 구현 코드는 TDD 사이클에 따라 별도 단계에서 추가됩니다.*
+*본 README는 학습 방향과 TDD 진행 현황의 SSOT입니다. 최신 종합: [Report/17](Report/17.%20MagicSquare_TDD_Full_Cycle_Session_Report.md). 회귀: `python -m pytest -q` → **70 passed** · `tests/test_golden_master_magic_square.py` → **17 passed**. GUI: `python -m boundary.screen.app` (PyQt6, `requirements-gui.txt`).*
