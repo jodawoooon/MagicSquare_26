@@ -369,11 +369,11 @@ python -m pytest tests/test_golden_master_magic_square.py -m golden_master -v
 
 #### P0
 
-- [ ] `boundary/ui_boundary.py` (신규) — `UIBoundary` Facade, E001~E007 envelope
-- [ ] `control/solve_partial.py` (신규) — locate→find→solve, short-circuit, E006/E007
-- [ ] `boundary/screen/presenter.py`, `main_window.py` — Screen→Control 직접 호출 제거, UIBoundary 위임
-- [ ] `control/pipeline.py` — `control→boundary` 역의존 제거 (Extract Class, Move Method)
-- [ ] `boundary/input_validator.py` — `boundary→entity` 직접 의존 제거, E004 미구현 정렬
+- [x] `boundary/ui_boundary.py` — `UIBoundary` Facade (validate/solve; envelope E001~E007 후속)
+- [x] `control/solve_partial.py` — `execute` + `NoValidAssignmentError` 매핑
+- [x] `boundary/screen/presenter.py`, `main_window.py` — UIBoundary 위임, Control 직접 import 제거
+- [x] `boundary/pipeline.py` — `control/pipeline` → boundary 이동, Golden Master import 갱신
+- [x] `boundary/input_validator.py` — `boundary→entity` 제거 (`boundary.constants` 사용)
 
 #### P1
 
@@ -388,9 +388,9 @@ python -m pytest tests/test_golden_master_magic_square.py -m golden_master -v
 
 #### P0
 
-- [ ] `boundary/validator.py` — `NotImplementedError` 제어 흐름 → Result Type
-- [ ] `control/pipeline.py` — 동일 패턴 Result Type 전환
-- [ ] `boundary/screen/presenter.py` — 동일 패턴 Result Type 전환
+- [x] `boundary/validator.py` — `NotImplementedError` → `ErrorResponse | None` 반환
+- [x] `boundary/pipeline.py` — size 검증 예외 흐름 제거
+- [x] `boundary/screen/presenter.py` — `NotImplementedError` catch 제거
 
 #### P1
 
@@ -698,6 +698,7 @@ Track B(Logic)를 먼저, FR-05에서 U-OUT과 짝을 맞춥니다. 각 행 = **
 | 1.10 | 2026-05-29 | Golden Master 회귀 안전장치(GM-01~10) 섹션 추가 — `test_golden_master_magic_square.py`·`golden_master_expected.txt` |
 | 1.11 | 2026-05-29 | REFACTOR To-Do 리스트 추가 — Report/14 기반 3그룹(A ECB · B SRP/계약 · C 테스트) 체크리스트 |
 | 1.12 | 2026-05-29 | 그룹 C P0 완료(수집 0건)·P1 Track B 8건 GREEN — `ui_boundary`, `solve_partial`, `tests/entity/grids.py` |
+| 1.13 | 2026-05-29 | ECB 리팩터(9d3250b)·size 검증 Result Type(2번째 커밋) — pipeline boundary 이동, Screen→UIBoundary |
 
 ---
 
