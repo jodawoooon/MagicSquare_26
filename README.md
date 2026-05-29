@@ -175,11 +175,14 @@ MagicSquare_xxx/
 │   └── 02. 4x4_MagicSquare_Dual-Track_TDD_CleanArchitecture_Design_Report.md
 │   └── 03. MagicSquare_CursorRules_and_UserEntity_Implementation_Report.md
 │   └── 04. MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md
+│   └── 05. MagicSquare_AC_FR_01_01_RED_Test_Implementation_Report.md
+├── test_plan.md
 └── Prompt/
     └── 01. 4x4_MagicSquare_Problem_Definition_Report_Prompt.md
     └── 02. MagicSquare_4x4_TDD_Interactive_Prompt_Transcript.md
     └── 03. MagicSquare_CursorRules_UserEntity_Interactive_Prompt_Transcript.md
     └── 04. MagicSquare_Level1-5_Interactive_Prompt_Transcript.md
+    └── 05. MagicSquare_AC_FR_01_01_Interactive_Prompt_Transcript.md
 ```
 
 | 경로 | 설명 |
@@ -188,10 +191,13 @@ MagicSquare_xxx/
 | [Report/02. 4x4_MagicSquare_Dual-Track_TDD_CleanArchitecture_Design_Report.md](Report/02.%204x4_MagicSquare_Dual-Track_TDD_CleanArchitecture_Design_Report.md) | Dual-Track UI+Logic TDD + Clean Architecture **설계 보고서** |
 | [Report/03. MagicSquare_CursorRules_and_UserEntity_Implementation_Report.md](Report/03.%20MagicSquare_CursorRules_and_UserEntity_Implementation_Report.md) | Cursor Rules 반영 + UserEntity 구현 관련 **결과 보고서** |
 | [Report/04. MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md](Report/04.%20MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md) | Level 1~5(Epic/Journey/Story/Scenario/Verification) **통합 검증 보고서** |
+| [Report/05. MagicSquare_AC_FR_01_01_RED_Test_Implementation_Report.md](Report/05.%20MagicSquare_AC_FR_01_01_RED_Test_Implementation_Report.md) | AC-FR-01-01 RED 테스트·실패 분석 **구현 보고서** |
+| [test_plan.md](test_plan.md) | FR-01 입력 크기 검증 **테스트 계획서** |
 | [Prompt/01. 4x4_MagicSquare_Problem_Definition_Report_Prompt.md](Prompt/01.%204x4_MagicSquare_Problem_Definition_Report_Prompt.md) | 동일 워크플로 **재실행용** 대화형 프롬프트 transcript |
 | [Prompt/02. MagicSquare_4x4_TDD_Interactive_Prompt_Transcript.md](Prompt/02.%20MagicSquare_4x4_TDD_Interactive_Prompt_Transcript.md) | 현재 요구 반영 **대화형 실행 프롬프트 export** |
 | [Prompt/03. MagicSquare_CursorRules_UserEntity_Interactive_Prompt_Transcript.md](Prompt/03.%20MagicSquare_CursorRules_UserEntity_Interactive_Prompt_Transcript.md) | Cursor Rules/UserEntity 관련 **대화형 프롬프트 export** |
 | [Prompt/04. MagicSquare_Level1-5_Interactive_Prompt_Transcript.md](Prompt/04.%20MagicSquare_Level1-5_Interactive_Prompt_Transcript.md) | Level 1~5 설계/검증 흐름 **대화형 프롬프트 export** |
+| [Prompt/05. MagicSquare_AC_FR_01_01_Interactive_Prompt_Transcript.md](Prompt/05.%20MagicSquare_AC_FR_01_01_Interactive_Prompt_Transcript.md) | AC-FR-01-01 RED 테스트 **대화형 프롬프트 export** |
 
 ---
 
@@ -235,6 +241,37 @@ MagicSquare_xxx/
 
 ---
 
+## RED 단계 To-Do 리스트
+
+> 이 체크리스트는 test_plan.md 기반으로 생성되었습니다.
+> 각 항목은 RED(실패 테스트 작성) 완료 시 체크합니다.
+
+### Track A — UI / Boundary 테스트
+- [ ] TC-A-01: grid=None 입력 → 실패 결과 반환 (Happy Path of Failure)
+- [ ] TC-A-02: code가 정확히 "INVALID_SIZE" 문자열인지 검증
+- [ ] TC-A-03: message가 "Grid must be 4x4." 와 문자 단위 동일한지 검증
+- [ ] TC-A-04: grid=None 시 Domain 진입점 0회 호출 (mock/spy 검증)
+- [ ] TC-A-05: grid=[] 빈 리스트 → 실패 결과 반환
+- [ ] TC-A-06: grid=3×4 크기 불일치 → 실패 결과 반환
+- [ ] TC-A-07: 반환 객체 타입이 지정 실패 결과 구조체인지 검증
+
+### Track B — Domain / Logic 테스트
+- [ ] TC-B-01: resolve()가 None grid를 직접 받지 않음을 격리 검증
+- [ ] TC-B-02: Boundary가 None 분기를 처리 후 resolve() 미호출 확인
+- [ ] TC-B-03: resolve() mock이 호출됐을 경우 테스트 실패 처리
+- [ ] TC-B-04: AC-FR-01-02~05 범위의 케이스는 이 커밋에 포함하지 않음 확인
+
+### 커버리지 목표
+- [ ] Domain Logic: 95%+ (pip install pytest-cov)
+- [ ] Boundary Layer: 85%+
+- [ ] 전체 TOTAL: 90%+
+
+### 결함 목록 연결
+- [ ] defect_list.md 생성 및 발견 결함 기록
+- [ ] 모든 결함 수정 후 회귀 테스트 통과 확인
+
+---
+
 ## 다음 단계 (권장 실행 순서)
 
 현재 기준의 권장 실행 순서는 다음과 같습니다.
@@ -275,6 +312,7 @@ MagicSquare_xxx/
 | 1.0 | 2026-05-28 | README 최초 작성 (STEP 1~5 보고서·프롬프트 기반) |
 | 1.1 | 2026-05-28 | 프로젝트 정의/목적/목표 고도화 + 마방진=도메인, 목표=TDD 구현 훈련 방향 통합 + RED-GREEN-REFACTOR 운영 규칙/고정 계약/DoD/불변조건 정합성 반영 |
 | 1.2 | 2026-05-28 | Report/Prompt 문서 목록 최신화 (03, 04 추가) + Level 1~5 통합 검증 보고서 및 Transcript 링크 반영 |
+| 1.3 | 2026-05-29 | AC-FR-01-01 RED 테스트 보고서(05)·Transcript(05)·test_plan.md 링크 반영 |
 
 ---
 
