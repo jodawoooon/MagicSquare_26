@@ -25,23 +25,17 @@ class MagicSquareResolver:
     def resolve(
         self, grid: list[list[int]] | None
     ) -> ResolveError | list[int]:
-        """Validate size and delegate to the domain solver when the grid is 4x4.
+        """Return INVALID_SIZE for null grid without calling the domain solver.
 
         Args:
             grid: Puzzle matrix or None.
 
         Returns:
-            ResolveError when size validation fails; solver result when valid.
+            ResolveError when grid is None; solver result otherwise.
         """
-        if grid is None or _has_invalid_size(grid):
+        if grid is None:
             return ResolveError(
                 code=_INVALID_SIZE_CODE,
                 message=_INVALID_SIZE_MESSAGE,
             )
         return self._solver.resolve(grid)
-
-
-def _has_invalid_size(grid: list[list[int]]) -> bool:
-    if len(grid) != 4:
-        return True
-    return any(len(row) != 4 for row in grid)
