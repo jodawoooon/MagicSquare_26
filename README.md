@@ -328,6 +328,97 @@ python -m pytest tests/test_golden_master_magic_square.py -m golden_master -v
 
 ---
 
+## REFACTOR To-Do 리스트
+
+> **SSOT:** [Report/14. MagicSquare_Refactoring_Plan_Report.md](Report/14.%20MagicSquare_Refactoring_Plan_Report.md)  
+> **회귀 안전망 (매 커밋):** GREEN 33 + Golden Master 17  
+> **실행 순서:** C(P0) → A(P0) → B(P0) → A(P1)+B(P1) → C(P1) → B(P2)
+
+### 그룹 C — 테스트·기반 시설
+
+**목표:** pytest 수집 복구 → 리팩토링 후 회귀 검증 가능 상태
+
+#### P0 — 수집 오류 복구
+
+- [x] `tests/entity/test_d_mis_01_missing_numbers.py` — `missing_number_finder` → `missing_numbers` import 정렬
+- [x] `tests/entity/test_d_sol_01_04_solution.py` — `control.solver` → `entity.solver` import 정렬
+- [x] `tests/boundary/test_u_flow_02_execute_zero_calls.py` — `ui_boundary`·`solve_partial` 구현 후 import 연결
+- [x] `tests/boundary/test_u_out_01_03_output_contract.py` — `ui_boundary` 구현 후 import 연결
+- [x] `pytest tests/` — collection error **0건** 확인
+
+#### P1 — RED 스켈레톤 GREEN 전환
+
+- [ ] `test_u_in_04_08_input_validation.py` — U-IN-04~08 (5건)
+- [x] `test_d_loc_01_blank_coords.py` — D-LOC-01 (1건)
+- [x] `test_d_val_01_06_magic_square.py` — D-VAL-01~06 (6건)
+- [x] `test_d_mis_01_missing_numbers.py` — D-MIS-01 (1건) *(P1 Track B)*
+- [ ] `test_d_sol_01_04_solution.py` — D-SOL-01~04 (4건) *(G1/G2 격자 SSOT·solver 연동 후속)*
+
+#### 회귀 기준 (리팩토링 대상 아님 — 매 커밋 검증)
+
+- [x] AC-FR-01-01 9건 (boundary 7 + control 2)
+- [x] Golden Master 17건
+
+---
+
+### 그룹 A — 아키텍처·의존성 정렬 (ECB)
+
+**목표:** 레이어 경계 복원, GUI·Pipeline 단일 풀이 경로 확립
+
+**목표 흐름:** `Screen → UIBoundary → SolvePartialMagicSquare → entity/services/*`
+
+#### P0
+
+- [ ] `boundary/ui_boundary.py` (신규) — `UIBoundary` Facade, E001~E007 envelope
+- [ ] `control/solve_partial.py` (신규) — locate→find→solve, short-circuit, E006/E007
+- [ ] `boundary/screen/presenter.py`, `main_window.py` — Screen→Control 직접 호출 제거, UIBoundary 위임
+- [ ] `control/pipeline.py` — `control→boundary` 역의존 제거 (Extract Class, Move Method)
+- [ ] `boundary/input_validator.py` — `boundary→entity` 직접 의존 제거, E004 미구현 정렬
+
+#### P1
+
+- [ ] `entity/solver.py` — Entity/Control 혼재 해소 → `two_cell_solver` 추출
+- [ ] `control/resolver.py` — E001 Control·Boundary 이중 책임 정리 (Collapse Hierarchy)
+
+---
+
+### 그룹 B — 책임·계약·코드 품질 (SRP / DTO / VO)
+
+**목표:** 단일 책임 정리, 오류·출력 계약 통합 (E001~E007·int[6] 불변)
+
+#### P0
+
+- [ ] `boundary/validator.py` — `NotImplementedError` 제어 흐름 → Result Type
+- [ ] `control/pipeline.py` — 동일 패턴 Result Type 전환
+- [ ] `boundary/screen/presenter.py` — 동일 패턴 Result Type 전환
+
+#### P1
+
+- [ ] `boundary/input_validator.py` — 검증 + ErrorResponse envelope 역할 분리
+- [ ] `control/resolver.py`, `boundary/validator.py` — `ErrorResponse`/`ResolveError`, `INVALID_SIZE` DTO 통합
+- [ ] `entity/solver.py`, `presenter.py` — `int[6]` primitive → `Solution` Value Object
+- [ ] `boundary/screen/main_window.py` — View + fixture 주입 분리
+
+#### P2
+
+- [ ] `entity/constants.py`, `boundary/constants.py`, `boundary/screen/` — `GRID_SIZE` 등 상수 SSOT 통합
+- [ ] `entity/services/magic_square_validator.py` — 단일 함수 다중 불변식 Extract Method
+- [ ] `entity/solver.py` — 4×4 `deepcopy` 단순화
+- [ ] `entity/user.py` — 도메인 무관 코드 정리 (Move Class / Remove Dead Code)
+
+---
+
+### REFACTOR Go/No-Go
+
+- [ ] `pytest tests/` — collection error 0건
+- [ ] GREEN 33 + Golden Master 17 PASS
+- [ ] AC-FR-01-01 9건 PASS
+- [ ] ECB 역의존 import 0건 (`boundary→entity`, `control→boundary`, Screen→Control)
+- [ ] E001~E007 code/message, int[6] 계약 불변
+- [ ] GUI 수동 체크 — `python -m boundary.screen.app` INVALID_SIZE 메시지 SSOT 일치
+
+---
+
 ## 로컬 실행 (현재 구현 범위)
 
 ### 환경 준비
@@ -538,7 +629,7 @@ Track B(Logic)를 먼저, FR-05에서 U-OUT과 짝을 맞춥니다. 각 행 = **
 | **M3** | Track A UI GREEN — U-IN-04~08, U-FLOW-02 (short-circuit) | ⏳ M2 이후 |
 | **M4** | FR-05 Dual-Track — U-OUT-01~03 (D-SOL 이후) | ⏳ |
 | **M5** | test_plan 갭 — 4×3·5×5·결정성 RED+GREEN | ⏳ |
-| **M6** | REFACTOR 시리즈 (API 통합, 중복 제거) — **GREEN 커밋과 분리** | ⏳ |
+| **M6** | REFACTOR 시리즈 — [REFACTOR To-Do](#refactor-to-do-리스트) (ECB·SRP·테스트 3그룹) · **GREEN 커밋과 분리** | ⏳ |
 | **M7** | 전체 35건 회귀 + 커버리지 (Boundary/Control ≥85%, Entity ≥95%) | ⏳ |
 
 ### 커버리지 목표
@@ -605,6 +696,8 @@ Track B(Logic)를 먼저, FR-05에서 U-OUT과 짝을 맞춥니다. 각 행 = **
 | 1.8 | 2026-05-29 | Report/11·Prompt/11 링크 반영 (분할 GREEN·TDD 진행 세션) |
 | 1.9 | 2026-05-29 | M1-GUI PyQt6 셸 구현·GUI 실행 섹션·Report/12·Prompt/12·`requirements-gui.txt` 반영 |
 | 1.10 | 2026-05-29 | Golden Master 회귀 안전장치(GM-01~10) 섹션 추가 — `test_golden_master_magic_square.py`·`golden_master_expected.txt` |
+| 1.11 | 2026-05-29 | REFACTOR To-Do 리스트 추가 — Report/14 기반 3그룹(A ECB · B SRP/계약 · C 테스트) 체크리스트 |
+| 1.12 | 2026-05-29 | 그룹 C P0 완료(수집 0건)·P1 Track B 8건 GREEN — `ui_boundary`, `solve_partial`, `tests/entity/grids.py` |
 
 ---
 

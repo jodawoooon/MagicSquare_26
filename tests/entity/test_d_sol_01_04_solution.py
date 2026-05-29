@@ -5,7 +5,7 @@ Domain Mock 금지. SSOT: Report/06 §8.
 
 import pytest
 
-from control.solver import solution
+from entity.solver import MagicSquareSolver, solution
 from entity.exceptions import UnsolvableDomainError
 
 
