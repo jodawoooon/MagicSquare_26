@@ -1,36 +1,37 @@
 """FR-01 matrix size validation at the Boundary layer."""
 
-from boundary.schemas import ErrorResponse
+from dataclasses import dataclass
 
 _INVALID_SIZE_CODE = "INVALID_SIZE"
 _INVALID_SIZE_MESSAGE = "Grid must be 4x4."
 
 
+@dataclass(frozen=True)
+class _SizeErrorResponse:
+    """Minimal failure payload for AC-FR-01-01 green-1 (TA-RED-001)."""
+
+    code: str
+    message: str
+
+
 class BoundaryValidator:
     """Validates 4x4 grid dimensions before Control/Entity processing."""
 
-    def validate(self, grid: list[list[int]] | None) -> ErrorResponse:
-        """Return INVALID_SIZE when the grid is not 4x4.
+    def validate(self, grid: list[list[int]] | None) -> _SizeErrorResponse:
+        """Return INVALID_SIZE when grid is None.
 
         Args:
             grid: Puzzle matrix or None when input is missing.
 
         Returns:
-            ErrorResponse with INVALID_SIZE when size rules are violated.
+            Size error response when grid is None.
 
         Raises:
-            NotImplementedError: When the grid passes size checks (out of AC-FR-01-01 scope).
+            NotImplementedError: For non-None inputs (later RED bundles).
         """
-        if self._has_invalid_size(grid):
-            return ErrorResponse(
+        if grid is None:
+            return _SizeErrorResponse(
                 code=_INVALID_SIZE_CODE,
                 message=_INVALID_SIZE_MESSAGE,
             )
-        raise NotImplementedError("Valid 4x4 grid is out of AC-FR-01-01 scope.")
-
-    def _has_invalid_size(self, grid: list[list[int]] | None) -> bool:
-        if grid is None:
-            return True
-        if len(grid) != 4:
-            return True
-        return any(len(row) != 4 for row in grid)
+        raise NotImplementedError("Non-None grid is out of AC-FR-01-01 green-1 scope.")
