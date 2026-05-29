@@ -3,9 +3,10 @@
 Domain Mock 금지. SSOT: Report/06 §8, Invariants I1~I5.
 """
 
-import pytest
+import copy
 
 from entity.services.magic_square_validator import is_magic_square
+from tests.entity.grids import GRID_G0
 
 
 class TestDVal01CompleteGridG0:
@@ -13,14 +14,7 @@ class TestDVal01CompleteGridG0:
 
     def test_d_val_01_is_magic_square_g0_complete_grid_returns_true(self) -> None:
         """D-VAL-01, AC-FR04-01 — G0 완성 격자 True."""
-        # Given
-        # matrix = G0
-
-        # When
-        # result = is_magic_square(matrix)
-
-        # Then
-        pytest.fail("RED: D-VAL-01 — G0 완성 마방진 is_magic_square True")
+        assert is_magic_square(GRID_G0) is True
 
 
 class TestDVal02RowSumMismatch:
@@ -28,14 +22,10 @@ class TestDVal02RowSumMismatch:
 
     def test_d_val_02_is_magic_square_row_sum_mismatch_returns_false(self) -> None:
         """D-VAL-02, I1 — G0[0][0]=15 시 행 합 불일치 False."""
-        # Given
-        # matrix = copy G0; matrix[0][0] = 15
+        matrix = copy.deepcopy(GRID_G0)
+        matrix[0][0] = 15
 
-        # When
-        # result = is_magic_square(matrix)
-
-        # Then
-        pytest.fail("RED: D-VAL-02 — 행 합 불일치 시 False")
+        assert is_magic_square(matrix) is False
 
 
 class TestDVal03ColSumMismatch:
@@ -43,14 +33,13 @@ class TestDVal03ColSumMismatch:
 
     def test_d_val_03_is_magic_square_col_sum_mismatch_returns_false(self) -> None:
         """D-VAL-03, I2 — G0 1열 합 깨짐 시 False."""
-        # Given
-        # matrix = G0 with column 1 sum broken
+        matrix = copy.deepcopy(GRID_G0)
+        matrix[0][0] = 1
+        matrix[1][0] = 1
+        matrix[2][0] = 1
+        matrix[3][0] = 1
 
-        # When
-        # result = is_magic_square(matrix)
-
-        # Then
-        pytest.fail("RED: D-VAL-03 — 열 합 불일치 시 False")
+        assert is_magic_square(matrix) is False
 
 
 class TestDVal04DiagonalMismatch:
@@ -58,14 +47,10 @@ class TestDVal04DiagonalMismatch:
 
     def test_d_val_04_is_magic_square_diagonal_mismatch_returns_false(self) -> None:
         """D-VAL-04, I3 — 대각선 불일치 시 False."""
-        # Given
-        # matrix = G0 with diagonal broken
+        matrix = copy.deepcopy(GRID_G0)
+        matrix[0][0] = 1
 
-        # When
-        # result = is_magic_square(matrix)
-
-        # Then
-        pytest.fail("RED: D-VAL-04 — 대각선 합 불일치 시 False")
+        assert is_magic_square(matrix) is False
 
 
 class TestDVal05DuplicateOrOutOfSet:
@@ -73,14 +58,11 @@ class TestDVal05DuplicateOrOutOfSet:
 
     def test_d_val_05_is_magic_square_duplicate_returns_false(self) -> None:
         """D-VAL-05, I4 — G0 중복 8 시 False."""
-        # Given
-        # matrix = G0 with duplicate 8
+        matrix = copy.deepcopy(GRID_G0)
+        matrix[0][1] = 8
+        matrix[0][2] = 8
 
-        # When
-        # result = is_magic_square(matrix)
-
-        # Then
-        pytest.fail("RED: D-VAL-05 — {1..16} 집합 위반(중복) 시 False")
+        assert is_magic_square(matrix) is False
 
 
 class TestDVal06CompleteGridWithZero:
@@ -88,11 +70,7 @@ class TestDVal06CompleteGridWithZero:
 
     def test_d_val_06_is_magic_square_complete_grid_with_zero_returns_false(self) -> None:
         """D-VAL-06, I4 — G0에 0 존재 시 완성 격자 위반 False."""
-        # Given
-        # matrix = G0; matrix[2][2] = 0
+        matrix = copy.deepcopy(GRID_G0)
+        matrix[2][2] = 0
 
-        # When
-        # result = is_magic_square(matrix)
-
-        # Then
-        pytest.fail("RED: D-VAL-06 — 완성 격자에 0 포함 시 False")
+        assert is_magic_square(matrix) is False

@@ -1,14 +1,14 @@
-"""End-to-end solve orchestration for Golden Master and integration flows."""
+"""End-to-end solve orchestration at the Boundary layer (FR-01, FR-05)."""
 
 from dataclasses import dataclass
 from typing import Literal
 
+from boundary.constants import INVALID_SIZE_CODE
 from boundary.input_validator import InputValidator
 from boundary.schemas import ErrorResponse
 from boundary.validator import BoundaryValidator
-from control.factory import create_magic_square_resolver
-from control.resolver import MagicSquareResolver, ResolveError
-from entity.exceptions import UnsolvableDomainError
+from control.exceptions import NoValidAssignmentError
+from control.solve_partial import SolvePartialMagicSquare
 
 _NO_VALID_ASSIGNMENT_CODE = "NO_VALID_ASSIGNMENT"
 
@@ -23,17 +23,17 @@ class SolveOutcome:
 
 
 class MagicSquarePipeline:
-    """Orchestrates boundary validation and domain resolution."""
+    """Orchestrates boundary validation and control solve execution."""
 
     def __init__(
         self,
         size_validator: BoundaryValidator | None = None,
         input_validator: InputValidator | None = None,
-        resolver: MagicSquareResolver | None = None,
+        solve_partial: SolvePartialMagicSquare | None = None,
     ) -> None:
         self._size_validator = size_validator or BoundaryValidator()
         self._input_validator = input_validator or InputValidator()
-        self._resolver = resolver or create_magic_square_resolver()
+        self._solve_partial = solve_partial or SolvePartialMagicSquare()
 
     def solve(self, grid: list[list[int]]) -> SolveOutcome:
         """Run the full solve flow and return a capture-friendly outcome.
@@ -44,7 +44,7 @@ class MagicSquarePipeline:
         Returns:
             Success outcome with int[6] solution or error outcome with code.
         """
-        size_error = self._try_size_validation(grid)
+        size_error = self._size_validator.validate(grid)
         if size_error is not None:
             return SolveOutcome(kind="error", error_code=size_error.code)
 
@@ -53,17 +53,8 @@ class MagicSquarePipeline:
             return SolveOutcome(kind="error", error_code=input_error.code)
 
         try:
-            result = self._resolver.resolve(grid)
-        except UnsolvableDomainError:
+            solution = self._solve_partial.execute(grid)
+        except NoValidAssignmentError:
             return SolveOutcome(kind="error", error_code=_NO_VALID_ASSIGNMENT_CODE)
 
-        if isinstance(result, ResolveError):
-            return SolveOutcome(kind="error", error_code=result.code)
-
-        return SolveOutcome(kind="success", solution=result)
-
-    def _try_size_validation(self, grid: list[list[int]]) -> ErrorResponse | None:
-        try:
-            return self._size_validator.validate(grid)
-        except NotImplementedError:
-            return None
+        return SolveOutcome(kind="success", solution=solution)

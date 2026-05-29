@@ -68,3 +68,15 @@ class MagicSquareSolver:
         if not is_magic_square(candidate):
             return None
         return [row_one, col_one, value_one, row_two, col_two, value_two]
+
+
+def solution(matrix: list[list[int]]) -> list[int]:
+    """Module-level FR-05 entry point for tests and integration.
+
+    Args:
+        matrix: Validated 4×4 partial magic square grid.
+
+    Returns:
+        Six-int solution ``[r1,c1,n1,r2,c2,n2]``.
+    """
+    return MagicSquareSolver().resolve(matrix)

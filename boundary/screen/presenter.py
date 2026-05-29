@@ -1,11 +1,11 @@
-"""Screen presenter — delegates to Boundary and Control layers only."""
+"""Screen presenter — delegates to UIBoundary only (no direct Control imports)."""
 
 from dataclasses import dataclass
 
-from boundary import BoundaryValidator
+from boundary.error_messages import message_for_code
+from boundary.pipeline import SolveOutcome
 from boundary.schemas import ErrorResponse
-from control.factory import create_magic_square_resolver
-from control.resolver import MagicSquareResolver, ResolveError
+from boundary.ui_boundary import UIBoundary
 
 
 @dataclass(frozen=True)
@@ -23,52 +23,42 @@ class SolveSuccess:
     filled_grid: list[list[int]]
 
 
-@dataclass(frozen=True)
-class NotImplementedResult:
-    """Backend feature is not yet available."""
-
-    message: str
-
-
-ScreenResult = (
-    ErrorResponse
-    | ValidationSuccess
-    | ResolveError
-    | SolveSuccess
-    | NotImplementedResult
-)
+ScreenResult = ErrorResponse | ValidationSuccess | SolveSuccess
 
 
 class ScreenPresenter:
-    """Thin adapter between PyQt view and boundary/control facades."""
+    """Thin adapter between PyQt view and UIBoundary."""
 
-    def __init__(
-        self,
-        validator: BoundaryValidator | None = None,
-        resolver: MagicSquareResolver | None = None,
-    ) -> None:
-        self._validator = validator or BoundaryValidator()
-        self._resolver = resolver or create_magic_square_resolver()
+    def __init__(self, ui_boundary: UIBoundary | None = None) -> None:
+        self._ui = ui_boundary or UIBoundary()
 
     def validate(self, grid: list[list[int]] | None) -> ValidationSuccess | ErrorResponse:
         """Run boundary size validation and map the outcome for the view."""
-        try:
-            return self._validator.validate(grid)
-        except NotImplementedError:
-            return ValidationSuccess()
+        error = self._ui.validate(grid)
+        if error is not None:
+            return error
+        return ValidationSuccess()
 
     def solve(self, grid: list[list[int]] | None) -> ScreenResult:
-        """Resolve a puzzle grid through the control layer."""
-        try:
-            result = self._resolver.resolve(grid)
-        except NotImplementedError as exc:
-            return NotImplementedResult(message=str(exc))
-
-        if isinstance(result, ResolveError):
+        """Resolve a puzzle grid through UIBoundary."""
+        result = self._ui.solve(grid)
+        if isinstance(result, ErrorResponse):
             return result
+        return _map_solve_outcome(grid, result)
 
-        filled = _apply_solution(grid, result)
-        return SolveSuccess(solution=result, filled_grid=filled)
+
+def _map_solve_outcome(
+    grid: list[list[int]] | None, outcome: SolveOutcome
+) -> ScreenResult:
+    if outcome.kind == "success":
+        if outcome.solution is None:
+            msg = "success outcome requires solution"
+            raise ValueError(msg)
+        filled = _apply_solution(grid, outcome.solution)
+        return SolveSuccess(solution=outcome.solution, filled_grid=filled)
+
+    code = outcome.error_code or "UNKNOWN_ERROR"
+    return ErrorResponse(code=code, message=message_for_code(code))
 
 
 def _apply_solution(

@@ -20,13 +20,11 @@ from PyQt6.QtWidgets import (
 from boundary.constants import GRID_SIZE
 from boundary.schemas import ErrorResponse
 from boundary.screen.presenter import (
-    NotImplementedResult,
     ScreenPresenter,
     SolveSuccess,
     ValidationSuccess,
 )
 from boundary.screen.sample_grids import SAMPLE_GRIDS
-from control.resolver import ResolveError
 
 _CELL_MIN = 0
 _CELL_MAX = 16
@@ -234,20 +232,6 @@ class MainWindow(QMainWindow):
             self._detail_text.setPlainText(
                 f"code: {result.code}\nmessage: {result.message}"
             )
-            self._clear_result_grid()
-            return
-
-        if isinstance(result, ResolveError):
-            self._set_status(f"[{result.code}] {result.message}", _STATUS_STYLE_ERROR)
-            self._detail_text.setPlainText(
-                f"code: {result.code}\nmessage: {result.message}"
-            )
-            self._clear_result_grid()
-            return
-
-        if isinstance(result, NotImplementedResult):
-            self._set_status("풀이 기능 미구현", _STATUS_STYLE_PENDING)
-            self._detail_text.setPlainText(result.message)
             self._clear_result_grid()
             return
 
