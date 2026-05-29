@@ -177,6 +177,7 @@ MagicSquare_xxx/
 │   └── 04. MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md
 │   └── 05. MagicSquare_AC_FR_01_01_RED_Test_Implementation_Report.md
 ├── test_plan.md
+├── defect_list.md
 └── Prompt/
     └── 01. 4x4_MagicSquare_Problem_Definition_Report_Prompt.md
     └── 02. MagicSquare_4x4_TDD_Interactive_Prompt_Transcript.md
@@ -193,6 +194,7 @@ MagicSquare_xxx/
 | [Report/04. MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md](Report/04.%20MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md) | Level 1~5(Epic/Journey/Story/Scenario/Verification) **통합 검증 보고서** |
 | [Report/05. MagicSquare_AC_FR_01_01_RED_Test_Implementation_Report.md](Report/05.%20MagicSquare_AC_FR_01_01_RED_Test_Implementation_Report.md) | AC-FR-01-01 RED 테스트·실패 분석 **구현 보고서** |
 | [test_plan.md](test_plan.md) | FR-01 입력 크기 검증 **테스트 계획서** |
+| [defect_list.md](defect_list.md) | RED 단계 **결함 목록** (DEF-001~010) |
 | [Prompt/01. 4x4_MagicSquare_Problem_Definition_Report_Prompt.md](Prompt/01.%204x4_MagicSquare_Problem_Definition_Report_Prompt.md) | 동일 워크플로 **재실행용** 대화형 프롬프트 transcript |
 | [Prompt/02. MagicSquare_4x4_TDD_Interactive_Prompt_Transcript.md](Prompt/02.%20MagicSquare_4x4_TDD_Interactive_Prompt_Transcript.md) | 현재 요구 반영 **대화형 실행 프롬프트 export** |
 | [Prompt/03. MagicSquare_CursorRules_UserEntity_Interactive_Prompt_Transcript.md](Prompt/03.%20MagicSquare_CursorRules_UserEntity_Interactive_Prompt_Transcript.md) | Cursor Rules/UserEntity 관련 **대화형 프롬프트 export** |
@@ -267,7 +269,7 @@ MagicSquare_xxx/
 - [ ] 전체 TOTAL: 90%+
 
 ### 결함 목록 연결
-- [ ] defect_list.md 생성 및 발견 결함 기록
+- [x] defect_list.md 생성 및 발견 결함 기록
 - [ ] 모든 결함 수정 후 회귀 테스트 통과 확인
 
 ---
