@@ -1,10 +1,18 @@
 """FR-01 input contract validation at the Boundary layer."""
 
-from boundary.constants import BLANK_VALUE, EXPECTED_BLANK_COUNT
+from boundary.constants import (
+    BLANK_VALUE,
+    EXPECTED_BLANK_COUNT,
+    MAX_CELL_VALUE,
+    MIN_CELL_VALUE,
+)
 from boundary.schemas import ErrorResponse
 
 _INVALID_BLANK_COUNT_CODE = "INVALID_BLANK_COUNT"
 _INVALID_BLANK_COUNT_MESSAGE = "빈칸(0)은 정확히 2개여야 한다."
+
+_VALUE_OUT_OF_RANGE_CODE = "VALUE_OUT_OF_RANGE"
+_VALUE_OUT_OF_RANGE_MESSAGE = "값은 0 또는 1~16만 허용된다."
 
 _DUPLICATE_NON_ZERO_CODE = "DUPLICATE_NON_ZERO_VALUE"
 _DUPLICATE_NON_ZERO_MESSAGE = "0을 제외한 숫자는 중복될 수 없다."
@@ -39,6 +47,11 @@ class InputValidator:
             for value in row:
                 if value == BLANK_VALUE:
                     continue
+                if value < MIN_CELL_VALUE or value > MAX_CELL_VALUE:
+                    return ErrorResponse(
+                        code=_VALUE_OUT_OF_RANGE_CODE,
+                        message=_VALUE_OUT_OF_RANGE_MESSAGE,
+                    )
                 if value in seen_non_zero:
                     return ErrorResponse(
                         code=_DUPLICATE_NON_ZERO_CODE,
