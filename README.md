@@ -176,6 +176,7 @@ MagicSquare_xxx/
 │   └── 03. MagicSquare_CursorRules_and_UserEntity_Implementation_Report.md
 │   └── 04. MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md
 │   └── 05. MagicSquare_AC_FR_01_01_RED_Test_Implementation_Report.md
+│   └── 06. MagicSquare_FR01_FR05_DualTrack_RED_Design_Report.md
 ├── test_plan.md
 ├── defect_list.md
 └── Prompt/
@@ -184,6 +185,7 @@ MagicSquare_xxx/
     └── 03. MagicSquare_CursorRules_UserEntity_Interactive_Prompt_Transcript.md
     └── 04. MagicSquare_Level1-5_Interactive_Prompt_Transcript.md
     └── 05. MagicSquare_AC_FR_01_01_Interactive_Prompt_Transcript.md
+    └── 06. MagicSquare_FR01_FR05_DualTrack_RED_Design_Interactive_Prompt_Transcript.md
 ```
 
 | 경로 | 설명 |
@@ -193,6 +195,8 @@ MagicSquare_xxx/
 | [Report/03. MagicSquare_CursorRules_and_UserEntity_Implementation_Report.md](Report/03.%20MagicSquare_CursorRules_and_UserEntity_Implementation_Report.md) | Cursor Rules 반영 + UserEntity 구현 관련 **결과 보고서** |
 | [Report/04. MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md](Report/04.%20MagicSquare_Level1-5_UserJourney_Story_Scenario_Verification_Report.md) | Level 1~5(Epic/Journey/Story/Scenario/Verification) **통합 검증 보고서** |
 | [Report/05. MagicSquare_AC_FR_01_01_RED_Test_Implementation_Report.md](Report/05.%20MagicSquare_AC_FR_01_01_RED_Test_Implementation_Report.md) | AC-FR-01-01 RED 테스트·실패 분석 **구현 보고서** |
+| [Report/06. MagicSquare_FR01_FR05_DualTrack_RED_Design_Report.md](Report/06.%20MagicSquare_FR01_FR05_DualTrack_RED_Design_Report.md) | FR-01~FR-05 Dual-Track **RED 설계표** 보고서 |
+| [Report/09. MagicSquare_DualTrack_RED_Skeleton_Test_Implementation_Report.md](Report/09.%20MagicSquare_DualTrack_RED_Skeleton_Test_Implementation_Report.md) | Dual-Track RED **스켈레톤 pytest** 구현 보고서 (24건) |
 | [test_plan.md](test_plan.md) | FR-01 입력 크기 검증 **테스트 계획서** |
 | [defect_list.md](defect_list.md) | RED 단계 **결함 목록** (DEF-001~010) |
 | [Prompt/01. 4x4_MagicSquare_Problem_Definition_Report_Prompt.md](Prompt/01.%204x4_MagicSquare_Problem_Definition_Report_Prompt.md) | 동일 워크플로 **재실행용** 대화형 프롬프트 transcript |
@@ -200,6 +204,8 @@ MagicSquare_xxx/
 | [Prompt/03. MagicSquare_CursorRules_UserEntity_Interactive_Prompt_Transcript.md](Prompt/03.%20MagicSquare_CursorRules_UserEntity_Interactive_Prompt_Transcript.md) | Cursor Rules/UserEntity 관련 **대화형 프롬프트 export** |
 | [Prompt/04. MagicSquare_Level1-5_Interactive_Prompt_Transcript.md](Prompt/04.%20MagicSquare_Level1-5_Interactive_Prompt_Transcript.md) | Level 1~5 설계/검증 흐름 **대화형 프롬프트 export** |
 | [Prompt/05. MagicSquare_AC_FR_01_01_Interactive_Prompt_Transcript.md](Prompt/05.%20MagicSquare_AC_FR_01_01_Interactive_Prompt_Transcript.md) | AC-FR-01-01 RED 테스트 **대화형 프롬프트 export** |
+| [Prompt/06. MagicSquare_FR01_FR05_DualTrack_RED_Design_Interactive_Prompt_Transcript.md](Prompt/06.%20MagicSquare_FR01_FR05_DualTrack_RED_Design_Interactive_Prompt_Transcript.md) | FR-01~FR-05 RED 설계 **대화형 프롬프트 export** |
+| [Prompt/07. MagicSquare_DualTrack_RED_Skeleton_Interactive_Prompt_Transcript.md](Prompt/07.%20MagicSquare_DualTrack_RED_Skeleton_Interactive_Prompt_Transcript.md) | Dual-Track RED 스켈레톤 **대화형 프롬프트 export** |
 
 ---
 
@@ -315,6 +321,8 @@ MagicSquare_xxx/
 | 1.1 | 2026-05-28 | 프로젝트 정의/목적/목표 고도화 + 마방진=도메인, 목표=TDD 구현 훈련 방향 통합 + RED-GREEN-REFACTOR 운영 규칙/고정 계약/DoD/불변조건 정합성 반영 |
 | 1.2 | 2026-05-28 | Report/Prompt 문서 목록 최신화 (03, 04 추가) + Level 1~5 통합 검증 보고서 및 Transcript 링크 반영 |
 | 1.3 | 2026-05-29 | AC-FR-01-01 RED 테스트 보고서(05)·Transcript(05)·test_plan.md 링크 반영 |
+| 1.4 | 2026-05-29 | FR-01~FR-05 Dual-Track RED 설계 보고서(06)·Transcript(06) 링크 반영 |
+| 1.5 | 2026-05-29 | Dual-Track RED 스켈레톤 구현 보고서(09)·Transcript(07) 링크 반영 |
 
 ---
 
