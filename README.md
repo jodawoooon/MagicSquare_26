@@ -5,11 +5,11 @@
 
 | 항목 | 내용 |
 |------|------|
-| **현재 단계** | AC-FR-01-01 **GREEN 완료** → Dual-Track GREEN 진행 중 |
+| **현재 단계** | AC-FR-01-01 **GREEN 완료** · M1-GUI **셸 구현** → Dual-Track GREEN 진행 중 |
 | **1차 범위** | 4×4 입력 계약 기반 **해결 결과 산출** |
 | **훈련 초점** | Domain 중심 설계 + Contract-first 테스트 |
 | **TDD 진행** | RED 설계 묶음 **17**개 중 GREEN **4**개 (커밋) · 테스트 **9/33** 통과 |
-| **상태** | AC-FR-01-01 **4커밋 GREEN** 완료 — GUI(`boundary/screen/`) **미구현** |
+| **상태** | AC-FR-01-01 **4커밋 GREEN** 완료 — GUI(`boundary/screen/`) **셸 구현** (`python -m boundary.screen.app`) |
 
 ---
 
@@ -142,7 +142,7 @@ flowchart LR
 
 ### 별도 스프린트 (TDD Track)
 
-- **그래픽 UI** (`boundary/screen/`) — Boundary 계약 GREEN 이후 **별도 RED→GREEN** (아래 [GUI 실행 검토](#gui-실행-검토) 참고)
+- **그래픽 UI** (`boundary/screen/`) — PyQt6 셸 **구현 완료** (크기 검증 표시·샘플 격자·풀이 시도). `test_gui_*.py` RED·풀이 GREEN 연동은 후속. 아래 [GUI 실행](#gui-실행) 참고.
 
 ### 합의 전 (TBD)
 
@@ -174,6 +174,7 @@ flowchart LR
 ```
 MagicSquare_xxx/
 ├── README.md                 ← 이 파일 (프로젝트 진입점)
+├── requirements-gui.txt      ← PyQt6 GUI 의존성 (pytest와 분리)
 ├── Report/
 │   └── 01. 4x4_MagicSquare_Problem_Definition_Report.md
 │   └── 02. 4x4_MagicSquare_Dual-Track_TDD_CleanArchitecture_Design_Report.md
@@ -184,12 +185,19 @@ MagicSquare_xxx/
 │   └── 09. MagicSquare_DualTrack_RED_Skeleton_Test_Implementation_Report.md
 │   └── 10. MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md
 │   └── 11. MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Report.md
+│   └── 12. MagicSquare_M1_GUI_PyQt_Implementation_Report.md
 ├── boundary/                  ← Boundary 최소 구현 (AC-FR-01-01 GREEN)
 │   ├── validator.py           # BoundaryValidator.validate()
 │   ├── schemas.py             # pydantic ErrorResponse
-│   └── constants.py           # GRID_SIZE
-│   └── screen/                # (예정) PyQt GUI — 미구현
+│   ├── constants.py           # GRID_SIZE
+│   └── screen/                # PyQt6 GUI (M1-GUI 셸)
+│       ├── app.py             # python -m boundary.screen.app
+│       ├── main_window.py     # 4×4 입력·결과 패널
+│       ├── presenter.py       # ScreenPresenter (boundary/control 어댑터)
+│       └── sample_grids.py    # G0~G2 샘플 격자
 ├── control/                   ← Control 최소 구현 (AC-FR-01-01 GREEN)
+│   ├── resolver.py            # MagicSquareResolver
+│   └── factory.py             # create_magic_square_resolver()
 ├── entity/                    ← Domain 스텁 + UserEntity
 ├── tests/                     ← pytest (Report/05 9건 + Report/09 스켈레톤 24건)
 ├── test_plan.md
@@ -201,6 +209,7 @@ MagicSquare_xxx/
     └── 04. MagicSquare_Level1-5_Interactive_Prompt_Transcript.md
     └── 05. MagicSquare_AC_FR_01_01_Interactive_Prompt_Transcript.md
     └── 06. MagicSquare_FR01_FR05_DualTrack_RED_Design_Interactive_Prompt_Transcript.md
+    └── 12. MagicSquare_M1_GUI_PyQt_Interactive_Prompt_Transcript.md
 ```
 
 | 경로 | 설명 |
@@ -214,6 +223,7 @@ MagicSquare_xxx/
 | [Report/09. MagicSquare_DualTrack_RED_Skeleton_Test_Implementation_Report.md](Report/09.%20MagicSquare_DualTrack_RED_Skeleton_Test_Implementation_Report.md) | Dual-Track RED **스켈레톤 pytest** 구현 보고서 (24건) |
 | [Report/10. MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md](Report/10.%20MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md) | AC-FR-01-01 **GREEN** 구현 보고서 (9건 통과) |
 | [Report/11. MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Report.md](Report/11.%20MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Report.md) | 분할 GREEN 4커밋·TDD 진행 현황·GUI 검토 **통합 보고서** |
+| [Report/12. MagicSquare_M1_GUI_PyQt_Implementation_Report.md](Report/12.%20MagicSquare_M1_GUI_PyQt_Implementation_Report.md) | M1-GUI PyQt6 셸 **구현 보고서** |
 | [test_plan.md](test_plan.md) | FR-01 입력 크기 검증 **테스트 계획서** |
 | [defect_list.md](defect_list.md) | RED 단계 **결함 목록** (DEF-001~010) |
 | [Prompt/01. 4x4_MagicSquare_Problem_Definition_Report_Prompt.md](Prompt/01.%204x4_MagicSquare_Problem_Definition_Report_Prompt.md) | 동일 워크플로 **재실행용** 대화형 프롬프트 transcript |
@@ -225,6 +235,7 @@ MagicSquare_xxx/
 | [Prompt/07. MagicSquare_DualTrack_RED_Skeleton_Interactive_Prompt_Transcript.md](Prompt/07.%20MagicSquare_DualTrack_RED_Skeleton_Interactive_Prompt_Transcript.md) | Dual-Track RED 스켈레톤 **대화형 프롬프트 export** |
 | [Prompt/10. MagicSquare_AC_FR_01_01_GREEN_Interactive_Prompt_Transcript.md](Prompt/10.%20MagicSquare_AC_FR_01_01_GREEN_Interactive_Prompt_Transcript.md) | AC-FR-01-01 일괄 GREEN **대화형 프롬프트 export** |
 | [Prompt/11. MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Interactive_Prompt_Transcript.md](Prompt/11.%20MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Interactive_Prompt_Transcript.md) | 분할 GREEN·TDD 진행·GUI 검토 **대화형 프롬프트 export** |
+| [Prompt/12. MagicSquare_M1_GUI_PyQt_Interactive_Prompt_Transcript.md](Prompt/12.%20MagicSquare_M1_GUI_PyQt_Interactive_Prompt_Transcript.md) | M1-GUI PyQt6 구현·실행 **대화형 프롬프트 export** |
 
 ---
 
@@ -280,6 +291,43 @@ MagicSquare_xxx/
 
 ---
 
+## RED 단계 To-Do 리스트
+
+> Track A/B 체크리스트·커버리지 목표·`defect_list.md` 연결은 [TDD 진행 현황](#tdd-진행-현황-red-묶음--green-목표) 및 `test_plan.md`를 참고한다.
+
+## Golden Master 회귀 안전장치
+
+Refactoring 시작 전 구축.  
+GREEN 완료 후 즉시 적용.
+
+### 기준 파일 생성
+
+- GM-01: `golden_master_expected.txt` 생성
+- GM-02: 정상/역순/오류 시나리오 추가
+- GM-03: `git add tests/golden_master_expected.txt`
+
+### 테스트 코드
+
+- GM-04: `test_golden_master_magic_square` 작성
+- GM-05: approve 패턴 적용
+- GM-06: Golden Master 테스트 PASS 확인
+
+```powershell
+python -m pytest tests/test_golden_master_magic_square.py -m golden_master -v
+# → 17 passed (GM-TC-01~05 + 계약 검증)
+```
+
+### 회귀 보호
+
+- GM-07: row-major 규칙 보호
+- GM-08: 1-index 출력 보호
+- GM-09: reverse 조합 fallback 보호
+- GM-10: Error Contract 보호
+
+> 상세 approve 패턴·시나리오 정의: `docs/golden_master_approve_pattern.md`
+
+---
+
 ## 로컬 실행 (현재 구현 범위)
 
 ### 환경 준비
@@ -291,12 +339,26 @@ python -m venv .venv
 pip install pytest pydantic pytest-cov
 ```
 
+GUI 실행 시 추가:
+
+```powershell
+pip install -r requirements-gui.txt
+```
+
 ### pytest — 회귀 기준선 (AC-FR-01-01)
 
 ```powershell
 python -m pytest tests/boundary/test_ac_fr_01_01_matrix_size.py tests/control/test_ac_fr_01_01_domain_isolation.py -v
 # → 9 passed
 ```
+
+### GUI — PyQt6 앱 실행
+
+```powershell
+python -m boundary.screen.app
+```
+
+창 제목 **MagicSquare — 4×4 마방진**이 표시됩니다.
 
 ### Python — Boundary 계약 직접 호출 (GUI 없이 확인)
 
@@ -311,70 +373,73 @@ python -c "from boundary import BoundaryValidator; r=BoundaryValidator().validat
 
 ---
 
-## GUI 실행 검토
+## GUI 실행
 
 ### 현재 상태
 
 | 항목 | 상태 |
 |------|------|
-| `boundary/screen/` | **없음** — GUI 코드 미작성 |
-| `boundary/ui_boundary.py` (`UIBoundary`) | **없음** — Report/09 스켈레톤이 import 대기 중 |
-| `python -m boundary.screen.app` | **실행 불가** (모듈 없음) |
-| pytest Boundary 계약 | **9건 PASS** — GUI와 동일 메시지를 보여줄 **백엔드만** 존재 |
+| `boundary/screen/` | ✅ PyQt6 GUI 셸 구현 |
+| `requirements-gui.txt` | ✅ PyQt6>=6.6.0 (pytest와 분리) |
+| `python -m boundary.screen.app` | ✅ 실행 가능 |
+| `boundary/ui_boundary.py` (`UIBoundary`) | ❌ 미구현 — Report/09 스켈레톤 import 대기 |
+| pytest Boundary 계약 | **9건 PASS** — GUI 크기 검증 메시지 SSOT 일치 |
+| `test_gui_*.py` | ❌ 미작성 — GUI 자동화 테스트 후속 |
 
-**결론**: 지금 단계에서는 **GUI 프로그램으로 전체 앱을 실행할 수 없습니다.**  
-다만 `BoundaryValidator`로 **크기 오류 메시지**는 Python 한 줄 또는 이후 GUI에서 동일 계약으로 표시할 수 있습니다.
-
-### ECB 권장 구조 (구현 시)
+### ECB 구조 (구현됨)
 
 ```text
-boundary/screen/          ← PyQt View (입력 격자, 결과 라벨)
-    ↓ 호출만
-boundary/validator.py     ← 기존 BoundaryValidator (pytest와 동일 SSOT)
-    ↓ (향후)
-control/resolver.py       ← 유효 입력 시에만
+boundary/screen/main_window.py   ← PyQt View (위젯·이벤트·표시)
     ↓
-entity/solver.py          ← Domain
+boundary/screen/presenter.py     ← ScreenPresenter
+    ↓                    ↓
+boundary/validator.py   control/resolver.py
+                              ↓
+                        entity/solver.py (control/factory.py 경유)
 ```
 
-- **screen → entity 직접 import 금지** (ECB)
-- **screen → control/entity에 PyQt import 금지** — UI는 `boundary/screen/`에만
-- GUI는 **비즈니스 로직을 복제하지 않고** `BoundaryValidator.validate(grid)` 결과의 `code`/`message`를 표시
+- **screen → entity 직접 import 금지** — `presenter`는 `control.factory`만 사용
+- **control/entity에 PyQt import 금지** — UI는 `boundary/screen/`에만
+- GUI는 **비즈니스 로직을 복제하지 않고** `BoundaryValidator.validate()` SSOT 호출
 
-### GUI 도입 TDD 순서 (권장)
+### GUI 기능
+
+| 영역 | 내용 |
+|------|------|
+| **입력** | 4×4 `QSpinBox` (0~16, 0=빈칸) |
+| **샘플** | G0(완성), G1(small-first), G2(reverse), 빈 격자 — Report/06 §5 |
+| **크기 검증** | `BoundaryValidator` — pytest와 동일 `INVALID_SIZE` 메시지 |
+| **검증 시나리오** | 현재 격자 / null / `[]` / 3×4 |
+| **풀이** | `MagicSquareResolver` — solver 스텁 시 미구현 안내 |
+| **결과** | 상태 라벨 · 상세 텍스트 · 풀이 후 격자 미리보기 |
+
+### 수동 확인 체크리스트
+
+- [ ] `python -m boundary.screen.app` — 창 표시
+- [ ] 검증 시나리오 `null` → `Grid must be 4x4.` (pytest `INVALID_SIZE_MESSAGE`와 동일)
+- [ ] 샘플 G1 로드 → 크기 검증 통과
+- [ ] G1 풀이 → `MagicSquareSolver.resolve is not implemented.` 안내
+- [ ] AC-FR-01-01 pytest 9건 PASS
+
+### GUI에서 보여줄 수 있는 것 / 없는 것
+
+| 입력·동작 | GUI 표시 | 백엔드 |
+|-----------|----------|--------|
+| null / `[]` / 3×4 (검증 시나리오) | `[INVALID_SIZE] Grid must be 4x4.` | ✅ `BoundaryValidator` |
+| 유효 4×4 + 크기 검증 | `Grid size is valid (4×4).` | ✅ |
+| G1 + 풀이 | 미구현 안내 | ❌ `MagicSquareSolver` 스텁 |
+| 빈칸 3개 등 | E002 등 | ❌ Report/09 U-IN 미GREEN |
+| G1 성공 `int[6]` | 풀이 후 격자 채움 | ❌ D-SOL GREEN 후 자동 연동 예정 |
+
+### GUI TDD 후속 (권장)
 
 | 순서 | 작업 | 커밋 예 |
 |:---:|------|---------|
-| 1 | `tests/boundary/test_gui_*.py` RED — `grid=None` 시 라벨에 `Grid must be 4x4.` (validator mock 또는 실제 호출) | `test(red): GUI shows INVALID_SIZE message` |
-| 2 | `boundary/screen/app.py` 최소 PyQt 창 + 4×4 입력 + Validate 버튼 | `feat(green): GUI shell with size validation display` |
-| 3 | GREEN 직후 수동 확인: `python -m boundary.screen.app` | README 체크리스트 |
-| 4 | U-IN-04~, D-SOL-* 등 **기능 GREEN마다** GUI에 해당 입력 시나리오 추가 | 묶음별 커밋 |
+| 1 | `tests/boundary/test_gui_*.py` RED — INVALID_SIZE 메시지 문자열 SSOT | `test(red): GUI shows INVALID_SIZE message` |
+| 2 | GUI 메시지 회귀 GREEN | `test(green): GUI validator message contract` |
+| 3 | D-SOL GREEN마다 풀이 결과·격자 표시 연동 | 묶음별 커밋 |
 
 GUI는 **AC-FR-01-01 GREEN 4커밋과 분리**하는 것이 원칙입니다 (기능 GREEN 커밋에 PyQt 섞지 않음).
-
-### 기술 스택 후보
-
-| 선택 | 장점 | 비고 |
-|------|------|------|
-| **PyQt6** | Report/06·프롬프트 워크플로와 일치, 4×4 격자 UI 적합 | `pip install PyQt6`, 별도 `requirements-gui.txt` 권장 |
-| tkinter | 표준 라이브러리, 의존성 없음 | 테스트 자동화·headless CI가 다소 불편 |
-| CLI (`boundary/cli.py`) | GUI 전 단계 스모크용 | `python -m boundary.cli --grid none` 형태 |
-
-### 지금 GUI에서 보여줄 수 있는 것 / 없는 것
-
-| 입력 | GUI 기대 (구현 후) | 현재 백엔드 |
-|------|-------------------|-------------|
-| 비어 있음 / null | `INVALID_SIZE` + `Grid must be 4x4.` | ✅ `BoundaryValidator` |
-| `[]`, 3×4, `[[]]*4` | 동일 | ✅ |
-| G1 유효 격자 + Solve | `int[6]` 성공 | ❌ `NotImplementedError` |
-| 빈칸 3개 등 | E002 등 | ❌ Report/09 미GREEN |
-
-### 다음 액션 (GUI 착수 시)
-
-1. `requirements-gui.txt`에 `PyQt6` 추가 (본 pytest 의존성과 분리)
-2. `boundary/screen/app.py` + `if __name__ == "__main__"` → `python -m boundary.screen.app`
-3. Validate 버튼 → `BoundaryValidator().validate(parsed_grid)` → QLabel에 `message` 표시
-4. pytest와 동일 문자열인지 수동 확인 (AC-FR-01-01 회귀)
 
 ---
 
@@ -424,7 +489,8 @@ python -m pytest tests/boundary/test_ac_fr_01_01_matrix_size.py tests/control/te
 | R-05-GAP-A | TA-RED-005~006 | — | ❌ | ❌ | 4×3, 5×5 — **RED 테스트 미작성** |
 | R-05-GAP-B | TA-RED-010 | — | ❌ | ❌ | 결정성(NFR-03) — **RED 테스트 미작성** |
 
-**구현 산출물**: `boundary/validator.py`, `boundary/schemas.py`, `control/resolver.py`, `entity/solver.py` (스텁) — [Report/10](Report/10.%20MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md)
+**구현 산출물**: `boundary/validator.py`, `boundary/schemas.py`, `control/resolver.py`, `entity/solver.py` (스텁) — [Report/10](Report/10.%20MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md)  
+**GUI 산출물**: `boundary/screen/`, `control/factory.py`, `requirements-gui.txt` — [Report/12](Report/12.%20MagicSquare_M1_GUI_PyQt_Implementation_Report.md)
 
 ### Report/09 — Dual-Track RED 묶음 (Logic + UI)
 
@@ -467,7 +533,7 @@ Track B(Logic)를 먼저, FR-05에서 U-OUT과 짝을 맞춥니다. 각 행 = **
 | 마일스톤 | 목표 | 상태 |
 |----------|------|------|
 | **M1** | AC-FR-01-01 크기 검증 RED→GREEN (Report/05, **4 GREEN 커밋**) | ✅ 완료 (9건) |
-| **M1-GUI** | Boundary 크기 오류 GUI 표시 (`boundary/screen/`) | ⏳ 미착수 |
+| **M1-GUI** | Boundary 크기 오류 GUI 표시 (`boundary/screen/`) | ✅ 셸 구현 (`test_gui_*.py` RED 후속) |
 | **M2** | Track B Logic GREEN — D-LOC → D-MIS → D-VAL → D-SOL | ⏳ 다음 |
 | **M3** | Track A UI GREEN — U-IN-04~08, U-FLOW-02 (short-circuit) | ⏳ M2 이후 |
 | **M4** | FR-05 Dual-Track — U-OUT-01~03 (D-SOL 이후) | ⏳ |
@@ -493,13 +559,13 @@ Track B(Logic)를 먼저, FR-05에서 U-OUT과 짝을 맞춥니다. 각 행 = **
 ## 다음 단계 (권장 실행 순서)
 
 1. **G3 unsolvable 격자 확정** (D-SOL-03, U-OUT-03 블로커)
-2. **R-09-B01** `feat(green): D-LOC-01` — Track B 첫 GREEN 커밋
-3. R-09-B02 → B04 → B05~B08 순 Logic GREEN
-4. R-09-A01~A06 — FR-01 UI 잔여 (E002→E004→E005 short-circuit)
-5. R-09-A07~A09 — FR-05 출력 계약 (D-SOL GREEN 이후)
-6. R-05-GAP-A/B — 4×3·5×5·결정성 RED 작성 후 GREEN
-7. REFACTOR 전용 커밋 (API `INVALID_SIZE` ↔ `E001~E005` 통합 등)
-8. **M1-GUI** — `boundary/screen/` PyQt 최소 창 (Boundary 계약 표시)
+2. **`test_gui_*.py` RED** — GUI INVALID_SIZE 메시지 SSOT 고정
+3. **R-09-B01** `feat(green): D-LOC-01` — Track B 첫 GREEN 커밋
+4. R-09-B02 → B04 → B05~B08 순 Logic GREEN
+5. R-09-A01~A06 — FR-01 UI 잔여 (E002→E004→E005 short-circuit)
+6. R-09-A07~A09 — FR-05 출력 계약 (D-SOL GREEN 이후)
+7. R-05-GAP-A/B — 4×3·5×5·결정성 RED 작성 후 GREEN
+8. REFACTOR 전용 커밋 (API `INVALID_SIZE` ↔ `E001~E005` 통합 등)
 9. Data / Integration RED — 별도 스프린트
 
 ---
@@ -537,7 +603,9 @@ Track B(Logic)를 먼저, FR-05에서 U-OUT과 짝을 맞춥니다. 각 행 = **
 | 1.6 | 2026-05-29 | AC-FR-01-01 GREEN(Report/10) 반영 · RED 묶음별 진행 현황·마일스톤·저장소 구조 갱신 |
 | 1.7 | 2026-05-29 | GREEN 4커밋 이력·설계/커밋 묶음 구분·로컬 실행·GUI 검토 섹션 추가 |
 | 1.8 | 2026-05-29 | Report/11·Prompt/11 링크 반영 (분할 GREEN·TDD 진행 세션) |
+| 1.9 | 2026-05-29 | M1-GUI PyQt6 셸 구현·GUI 실행 섹션·Report/12·Prompt/12·`requirements-gui.txt` 반영 |
+| 1.10 | 2026-05-29 | Golden Master 회귀 안전장치(GM-01~10) 섹션 추가 — `test_golden_master_magic_square.py`·`golden_master_expected.txt` |
 
 ---
 
-*본 README는 학습 방향과 TDD 진행 현황의 SSOT입니다. **설계 묶음**은 test_plan 추적용, **커밋 묶음**은 git log(`bc022cb`~`d0fe1e2`) 기준입니다.*
+*본 README는 학습 방향과 TDD 진행 현황의 SSOT입니다. **설계 묶음**은 test_plan 추적용, **커밋 묶음**은 git log(`bc022cb`~`d0fe1e2`) 기준입니다. GUI 실행은 `python -m boundary.screen.app` (v1.9~).*
