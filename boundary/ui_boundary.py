@@ -1,9 +1,10 @@
 """UI boundary facade — validate/solve envelope contract (FR-01, FR-05)."""
 
-from boundary.input_validator import InputValidator
+from boundary.constants import INVALID_SIZE_CODE
+from boundary.error_messages import message_for_code
+from boundary.pipeline import MagicSquarePipeline, SolveOutcome
 from boundary.schemas import ErrorResponse
 from boundary.validator import BoundaryValidator
-from control.solve_partial import SolvePartialMagicSquare
 
 
 class UIBoundary:
@@ -12,37 +13,43 @@ class UIBoundary:
     def __init__(
         self,
         size_validator: BoundaryValidator | None = None,
-        input_validator: InputValidator | None = None,
-        solve_partial: SolvePartialMagicSquare | None = None,
+        pipeline: MagicSquarePipeline | None = None,
     ) -> None:
         self._size_validator = size_validator or BoundaryValidator()
-        self._input_validator = input_validator or InputValidator()
-        self._solve_partial = solve_partial or SolvePartialMagicSquare()
+        self._pipeline = pipeline or MagicSquarePipeline(
+            size_validator=self._size_validator,
+        )
 
     def validate(self, grid: list[list[int]] | None) -> ErrorResponse | None:
-        """Run size and input contract validation.
+        """Run matrix size validation for the UI contract.
 
         Args:
             grid: Puzzle matrix or None.
 
         Returns:
-            ErrorResponse when validation fails; None when input is valid.
-
-        Raises:
-            NotImplementedError: When validation envelope contract is not wired.
+            ErrorResponse when size validation fails; None when size is valid.
         """
-        raise NotImplementedError("UIBoundary.validate is not implemented yet.")
+        try:
+            return self._size_validator.validate(grid)
+        except NotImplementedError:
+            return None
 
-    def solve(self, grid: list[list[int]] | None) -> object:
-        """Validate and solve, returning a success or failure envelope.
+    def solve(self, grid: list[list[int]] | None) -> SolveOutcome | ErrorResponse:
+        """Validate and solve, returning a pipeline outcome or size error envelope.
 
         Args:
             grid: Puzzle matrix or None.
 
         Returns:
-            Envelope DTO with success flag and data or error fields.
-
-        Raises:
-            NotImplementedError: When solve envelope contract is not wired.
+            SolveOutcome on success or input-rule failure; ErrorResponse for null
+            or invalid matrix size.
         """
-        raise NotImplementedError("UIBoundary.solve is not implemented yet.")
+        size_error = self.validate(grid)
+        if size_error is not None:
+            return size_error
+        if grid is None:
+            return ErrorResponse(
+                code=INVALID_SIZE_CODE,
+                message=message_for_code(INVALID_SIZE_CODE),
+            )
+        return self._pipeline.solve(grid)

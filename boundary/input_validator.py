@@ -1,10 +1,6 @@
 """FR-01 input contract validation at the Boundary layer."""
 
-from entity.constants import (
-    BLANK_VALUE,
-    MAX_CELL_VALUE,
-    MIN_CELL_VALUE,
-)
+from boundary.constants import BLANK_VALUE, EXPECTED_BLANK_COUNT
 from boundary.schemas import ErrorResponse
 
 _INVALID_BLANK_COUNT_CODE = "INVALID_BLANK_COUNT"
@@ -32,7 +28,7 @@ class InputValidator:
             for value in row
             if value == BLANK_VALUE
         )
-        if blank_count != 2:
+        if blank_count != EXPECTED_BLANK_COUNT:
             return ErrorResponse(
                 code=_INVALID_BLANK_COUNT_CODE,
                 message=_INVALID_BLANK_COUNT_MESSAGE,

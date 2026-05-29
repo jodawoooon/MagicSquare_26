@@ -1,6 +1,6 @@
 """Format solve outcomes for Golden Master comparison."""
 
-from control.pipeline import SolveOutcome
+from boundary.pipeline import SolveOutcome
 
 
 def format_grid(grid: list[list[int]]) -> str:

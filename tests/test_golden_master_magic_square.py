@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from control.pipeline import MagicSquarePipeline
+from boundary.pipeline import MagicSquarePipeline
 from tests.golden_master.approve import DEFAULT_GOLDEN_PATH, approve, approve_scenario
 from tests.golden_master.capture import capture_scenario
 from tests.golden_master.contract import assert_error_contract, assert_success_contract

@@ -1,6 +1,6 @@
 """Capture current solver output for Golden Master scenarios."""
 
-from control.pipeline import MagicSquarePipeline, SolveOutcome
+from boundary.pipeline import MagicSquarePipeline, SolveOutcome
 
 from tests.golden_master.formatter import format_scenario_section
 from tests.golden_master.scenarios import SCENARIOS, GoldenMasterScenario
