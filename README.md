@@ -186,18 +186,24 @@ MagicSquare_xxx/
 │   └── 10. MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md
 │   └── 11. MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Report.md
 │   └── 12. MagicSquare_M1_GUI_PyQt_Implementation_Report.md
-├── boundary/                  ← Boundary 최소 구현 (AC-FR-01-01 GREEN)
-│   ├── validator.py           # BoundaryValidator.validate()
-│   ├── schemas.py             # pydantic ErrorResponse
-│   ├── constants.py           # GRID_SIZE
+│   └── 14. MagicSquare_Refactoring_Plan_Report.md
+├── boundary/                  ← Boundary (AC-FR-01-01 + REFACTOR P0)
+│   ├── validator.py           # BoundaryValidator (size)
+│   ├── input_validator.py     # blank count / duplicate
+│   ├── ui_boundary.py         # UIBoundary facade
+│   ├── pipeline.py            # MagicSquarePipeline (Golden Master)
+│   ├── schemas.py             # ErrorResponse
+│   ├── constants.py           # GRID_SIZE, input contract constants
 │   └── screen/                # PyQt6 GUI (M1-GUI 셸)
 │       ├── app.py             # python -m boundary.screen.app
 │       ├── main_window.py     # 4×4 입력·결과 패널
-│       ├── presenter.py       # ScreenPresenter (boundary/control 어댑터)
+│       ├── presenter.py       # ScreenPresenter → UIBoundary
 │       └── sample_grids.py    # G0~G2 샘플 격자
-├── control/                   ← Control 최소 구현 (AC-FR-01-01 GREEN)
-│   ├── resolver.py            # MagicSquareResolver
-│   └── factory.py             # create_magic_square_resolver()
+├── control/                   ← Control
+│   ├── resolver.py            # MagicSquareResolver (AC-FR-01-01)
+│   ├── solve_partial.py       # SolvePartialMagicSquare.execute
+│   ├── factory.py             # create_magic_square_resolver()
+│   └── exceptions.py          # NoValidAssignmentError
 ├── entity/                    ← Domain 스텁 + UserEntity
 ├── tests/                     ← pytest (Report/05 9건 + Report/09 스켈레톤 24건)
 ├── test_plan.md
@@ -224,6 +230,7 @@ MagicSquare_xxx/
 | [Report/10. MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md](Report/10.%20MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md) | AC-FR-01-01 **GREEN** 구현 보고서 (9건 통과) |
 | [Report/11. MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Report.md](Report/11.%20MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Report.md) | 분할 GREEN 4커밋·TDD 진행 현황·GUI 검토 **통합 보고서** |
 | [Report/12. MagicSquare_M1_GUI_PyQt_Implementation_Report.md](Report/12.%20MagicSquare_M1_GUI_PyQt_Implementation_Report.md) | M1-GUI PyQt6 셸 **구현 보고서** |
+| [Report/14. MagicSquare_Refactoring_Plan_Report.md](Report/14.%20MagicSquare_Refactoring_Plan_Report.md) | REFACTOR 사전 분석·ECB/SRP·**To-Do SSOT** |
 | [test_plan.md](test_plan.md) | FR-01 입력 크기 검증 **테스트 계획서** |
 | [defect_list.md](defect_list.md) | RED 단계 **결함 목록** (DEF-001~010) |
 | [Prompt/01. 4x4_MagicSquare_Problem_Definition_Report_Prompt.md](Prompt/01.%204x4_MagicSquare_Problem_Definition_Report_Prompt.md) | 동일 워크플로 **재실행용** 대화형 프롬프트 transcript |
@@ -334,6 +341,25 @@ python -m pytest tests/test_golden_master_magic_square.py -m golden_master -v
 > **회귀 안전망 (매 커밋):** GREEN 33 + Golden Master 17  
 > **실행 순서:** C(P0) → A(P0) → B(P0) → A(P1)+B(P1) → C(P1) → B(P2)
 
+### REFACTOR P0 커밋 이력 (3단계 · `refactor/refactor` 브랜치)
+
+| 순서 | 커밋 | 내용 |
+|:--:|---|---|
+| 1 | `51cd8ed` | dual-track pytest **수집 복구**(import·`ui_boundary`/`solve_partial` 대상), `tests/entity/grids.py`, D-LOC/D-MIS/D-VAL assert 연결 |
+| 2 | `9d3250b` | `MagicSquarePipeline` → `boundary/pipeline`, Screen→`UIBoundary`, `input_validator`의 boundary→entity 제거 |
+| 3 | `c1cd59b` | `BoundaryValidator` size 검증을 `ErrorResponse \| None`으로 통일(예외 기반 흐름 제거) |
+
+**매 REFACTOR 커밋 후 회귀 (최소):**
+
+```powershell
+python -m pytest tests/boundary/test_ac_fr_01_01_matrix_size.py `
+  tests/control/test_ac_fr_01_01_domain_isolation.py `
+  tests/entity/test_user.py `
+  tests/test_golden_master_magic_square.py -q
+python -m pytest tests/test_golden_master_magic_square.py::test_golden_master_full_document_matches_baseline -q
+python -m pytest tests/ --collect-only -q
+```
+
 ### 그룹 C — 테스트·기반 시설
 
 **목표:** pytest 수집 복구 → 리팩토링 후 회귀 검증 가능 상태
@@ -410,12 +436,22 @@ python -m pytest tests/test_golden_master_magic_square.py -m golden_master -v
 
 ### REFACTOR Go/No-Go
 
-- [ ] `pytest tests/` — collection error 0건
-- [ ] GREEN 33 + Golden Master 17 PASS
-- [ ] AC-FR-01-01 9건 PASS
-- [ ] ECB 역의존 import 0건 (`boundary→entity`, `control→boundary`, Screen→Control)
-- [ ] E001~E007 code/message, int[6] 계약 불변
+- [x] `pytest tests/` — collection error **0건** (57 collected, 2026-05-29)
+- [x] GREEN **33** + Golden Master **17** PASS
+- [x] AC-FR-01-01 **9건** PASS (위 33에 포함)
+- [x] ECB **P0** 역의존 — `boundary→entity`·`control→boundary`·Screen→Control 직접 호출 없음 *(P1: resolver DTO 통합 등 후속)*
+- [x] Golden Master baseline — full-document **diff 0** (`test_golden_master_full_document_matches_baseline`)
+- [ ] E001~E007 **표준 failure/success envelope** — `UIBoundary`·U-IN/U-OUT GREEN 후속
 - [ ] GUI 수동 체크 — `python -m boundary.screen.app` INVALID_SIZE 메시지 SSOT 일치
+
+### 후속 작업 (P0 범위 밖 · 체크리스트 유지)
+
+| 영역 | 항목 |
+|------|------|
+| **C P1** | U-IN-04~08 GREEN(5), D-SOL-01~04 GREEN(4) |
+| **A P1** | `two_cell_solver` 추출, `control/resolver` E001 정리 |
+| **B P1** | input_validator envelope 분리, DTO/VO 통합, main_window fixture 분리 |
+| **B P2** | 상수 SSOT, validator Extract Method, solver deepcopy, `entity/user` 정리 |
 
 ---
 
@@ -473,25 +509,29 @@ python -c "from boundary import BoundaryValidator; r=BoundaryValidator().validat
 | `boundary/screen/` | ✅ PyQt6 GUI 셸 구현 |
 | `requirements-gui.txt` | ✅ PyQt6>=6.6.0 (pytest와 분리) |
 | `python -m boundary.screen.app` | ✅ 실행 가능 |
-| `boundary/ui_boundary.py` (`UIBoundary`) | ❌ 미구현 — Report/09 스켈레톤 import 대기 |
+| `boundary/ui_boundary.py` (`UIBoundary`) | ✅ P0 — size 검증·`MagicSquarePipeline` 위임 (E001~E007 envelope 후속) |
 | pytest Boundary 계약 | **9건 PASS** — GUI 크기 검증 메시지 SSOT 일치 |
 | `test_gui_*.py` | ❌ 미작성 — GUI 자동화 테스트 후속 |
 
 ### ECB 구조 (구현됨)
 
 ```text
-boundary/screen/main_window.py   ← PyQt View (위젯·이벤트·표시)
+boundary/screen/main_window.py   ← PyQt View
     ↓
 boundary/screen/presenter.py     ← ScreenPresenter
-    ↓                    ↓
-boundary/validator.py   control/resolver.py
-                              ↓
-                        entity/solver.py (control/factory.py 경유)
+    ↓
+boundary/ui_boundary.py          ← UIBoundary (validate / solve)
+    ↓
+boundary/pipeline.py             ← MagicSquarePipeline
+    ↓
+control/solve_partial.py         ← SolvePartialMagicSquare.execute
+    ↓
+entity/solver.py                 ← MagicSquareSolver
 ```
 
-- **screen → entity 직접 import 금지** — `presenter`는 `control.factory`만 사용
+- **screen → control/entity 직접 import 금지** — `presenter`는 `UIBoundary`만 사용
 - **control/entity에 PyQt import 금지** — UI는 `boundary/screen/`에만
-- GUI는 **비즈니스 로직을 복제하지 않고** `BoundaryValidator.validate()` SSOT 호출
+- GUI 크기 검증은 `UIBoundary.validate()` → `BoundaryValidator` SSOT
 
 ### GUI 기능
 
@@ -501,7 +541,7 @@ boundary/validator.py   control/resolver.py
 | **샘플** | G0(완성), G1(small-first), G2(reverse), 빈 격자 — Report/06 §5 |
 | **크기 검증** | `BoundaryValidator` — pytest와 동일 `INVALID_SIZE` 메시지 |
 | **검증 시나리오** | 현재 격자 / null / `[]` / 3×4 |
-| **풀이** | `MagicSquareResolver` — solver 스텁 시 미구현 안내 |
+| **풀이** | `UIBoundary.solve()` → pipeline → `SolvePartialMagicSquare` (유효 격자) |
 | **결과** | 상태 라벨 · 상세 텍스트 · 풀이 후 격자 미리보기 |
 
 ### 수동 확인 체크리스트
@@ -509,7 +549,7 @@ boundary/validator.py   control/resolver.py
 - [ ] `python -m boundary.screen.app` — 창 표시
 - [ ] 검증 시나리오 `null` → `Grid must be 4x4.` (pytest `INVALID_SIZE_MESSAGE`와 동일)
 - [ ] 샘플 G1 로드 → 크기 검증 통과
-- [ ] G1 풀이 → `MagicSquareSolver.resolve is not implemented.` 안내
+- [ ] G1 풀이 — 성공 `int[6]` 또는 `NO_VALID_ASSIGNMENT` 등 pipeline 결과 표시
 - [ ] AC-FR-01-01 pytest 9건 PASS
 
 ### GUI에서 보여줄 수 있는 것 / 없는 것
@@ -629,7 +669,7 @@ Track B(Logic)를 먼저, FR-05에서 U-OUT과 짝을 맞춥니다. 각 행 = **
 | **M3** | Track A UI GREEN — U-IN-04~08, U-FLOW-02 (short-circuit) | ⏳ M2 이후 |
 | **M4** | FR-05 Dual-Track — U-OUT-01~03 (D-SOL 이후) | ⏳ |
 | **M5** | test_plan 갭 — 4×3·5×5·결정성 RED+GREEN | ⏳ |
-| **M6** | REFACTOR 시리즈 — [REFACTOR To-Do](#refactor-to-do-리스트) (ECB·SRP·테스트 3그룹) · **GREEN 커밋과 분리** | ⏳ |
+| **M6** | REFACTOR P0 — [REFACTOR To-Do](#refactor-to-do-리스트) 3커밋(`51cd8ed`~`c1cd59b`) 완료 · P1/P2·U-IN GREEN 후속 | 🟡 P0 완료 |
 | **M7** | 전체 35건 회귀 + 커버리지 (Boundary/Control ≥85%, Entity ≥95%) | ⏳ |
 
 ### 커버리지 목표
@@ -698,7 +738,8 @@ Track B(Logic)를 먼저, FR-05에서 U-OUT과 짝을 맞춥니다. 각 행 = **
 | 1.10 | 2026-05-29 | Golden Master 회귀 안전장치(GM-01~10) 섹션 추가 — `test_golden_master_magic_square.py`·`golden_master_expected.txt` |
 | 1.11 | 2026-05-29 | REFACTOR To-Do 리스트 추가 — Report/14 기반 3그룹(A ECB · B SRP/계약 · C 테스트) 체크리스트 |
 | 1.12 | 2026-05-29 | 그룹 C P0 완료(수집 0건)·P1 Track B 8건 GREEN — `ui_boundary`, `solve_partial`, `tests/entity/grids.py` |
-| 1.13 | 2026-05-29 | ECB 리팩터(9d3250b)·size 검증 Result Type(2번째 커밋) — pipeline boundary 이동, Screen→UIBoundary |
+| 1.13 | 2026-05-29 | ECB 리팩터(9d3250b)·size 검증 Result Type(c1cd59b) — pipeline boundary 이동, Screen→UIBoundary |
+| 1.14 | 2026-05-29 | REFACTOR To-Do 전면 점검 — P0 커밋 3단계·Go/No-Go·GUI/저장소 구조·후속(P1/P2) SSOT 정합 |
 
 ---
 
