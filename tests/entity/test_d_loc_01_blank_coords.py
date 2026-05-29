@@ -3,8 +3,10 @@
 Domain Mock 금지. SSOT: Report/06 §8.
 """
 
+import pytest
+
 from entity.services.blank_locator import find_blank_coords
-from tests.entity.grids import GRID_G1
+from tests.entity.grids import GRID_G0, GRID_G1
 
 
 class TestDLoc01BlankCoordsG1:
@@ -15,3 +17,12 @@ class TestDLoc01BlankCoordsG1:
         coords = find_blank_coords(GRID_G1)
 
         assert coords == [(2, 2), (3, 3)]
+
+
+class TestDLoc02BlankCountGuard:
+    """D-LOC-02 — invalid blank count raises ValueError."""
+
+    def test_d_loc_02_wrong_blank_count_raises_value_error(self) -> None:
+        """D-LOC-02, I6 guard — 빈칸 0개 격자 ValueError."""
+        with pytest.raises(ValueError, match="expected 2 blanks"):
+            find_blank_coords(GRID_G0)
