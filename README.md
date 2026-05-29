@@ -183,6 +183,7 @@ MagicSquare_xxx/
 │   └── 06. MagicSquare_FR01_FR05_DualTrack_RED_Design_Report.md
 │   └── 09. MagicSquare_DualTrack_RED_Skeleton_Test_Implementation_Report.md
 │   └── 10. MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md
+│   └── 11. MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Report.md
 ├── boundary/                  ← Boundary 최소 구현 (AC-FR-01-01 GREEN)
 │   ├── validator.py           # BoundaryValidator.validate()
 │   ├── schemas.py             # pydantic ErrorResponse
@@ -212,6 +213,7 @@ MagicSquare_xxx/
 | [Report/06. MagicSquare_FR01_FR05_DualTrack_RED_Design_Report.md](Report/06.%20MagicSquare_FR01_FR05_DualTrack_RED_Design_Report.md) | FR-01~FR-05 Dual-Track **RED 설계표** 보고서 |
 | [Report/09. MagicSquare_DualTrack_RED_Skeleton_Test_Implementation_Report.md](Report/09.%20MagicSquare_DualTrack_RED_Skeleton_Test_Implementation_Report.md) | Dual-Track RED **스켈레톤 pytest** 구현 보고서 (24건) |
 | [Report/10. MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md](Report/10.%20MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md) | AC-FR-01-01 **GREEN** 구현 보고서 (9건 통과) |
+| [Report/11. MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Report.md](Report/11.%20MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Report.md) | 분할 GREEN 4커밋·TDD 진행 현황·GUI 검토 **통합 보고서** |
 | [test_plan.md](test_plan.md) | FR-01 입력 크기 검증 **테스트 계획서** |
 | [defect_list.md](defect_list.md) | RED 단계 **결함 목록** (DEF-001~010) |
 | [Prompt/01. 4x4_MagicSquare_Problem_Definition_Report_Prompt.md](Prompt/01.%204x4_MagicSquare_Problem_Definition_Report_Prompt.md) | 동일 워크플로 **재실행용** 대화형 프롬프트 transcript |
@@ -221,6 +223,8 @@ MagicSquare_xxx/
 | [Prompt/05. MagicSquare_AC_FR_01_01_Interactive_Prompt_Transcript.md](Prompt/05.%20MagicSquare_AC_FR_01_01_Interactive_Prompt_Transcript.md) | AC-FR-01-01 RED 테스트 **대화형 프롬프트 export** |
 | [Prompt/06. MagicSquare_FR01_FR05_DualTrack_RED_Design_Interactive_Prompt_Transcript.md](Prompt/06.%20MagicSquare_FR01_FR05_DualTrack_RED_Design_Interactive_Prompt_Transcript.md) | FR-01~FR-05 RED 설계 **대화형 프롬프트 export** |
 | [Prompt/07. MagicSquare_DualTrack_RED_Skeleton_Interactive_Prompt_Transcript.md](Prompt/07.%20MagicSquare_DualTrack_RED_Skeleton_Interactive_Prompt_Transcript.md) | Dual-Track RED 스켈레톤 **대화형 프롬프트 export** |
+| [Prompt/10. MagicSquare_AC_FR_01_01_GREEN_Interactive_Prompt_Transcript.md](Prompt/10.%20MagicSquare_AC_FR_01_01_GREEN_Interactive_Prompt_Transcript.md) | AC-FR-01-01 일괄 GREEN **대화형 프롬프트 export** |
+| [Prompt/11. MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Interactive_Prompt_Transcript.md](Prompt/11.%20MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Interactive_Prompt_Transcript.md) | 분할 GREEN·TDD 진행·GUI 검토 **대화형 프롬프트 export** |
 
 ---
 
@@ -532,6 +536,7 @@ Track B(Logic)를 먼저, FR-05에서 U-OUT과 짝을 맞춥니다. 각 행 = **
 | 1.5 | 2026-05-29 | Dual-Track RED 스켈레톤 구현 보고서(09)·Transcript(07) 링크 반영 |
 | 1.6 | 2026-05-29 | AC-FR-01-01 GREEN(Report/10) 반영 · RED 묶음별 진행 현황·마일스톤·저장소 구조 갱신 |
 | 1.7 | 2026-05-29 | GREEN 4커밋 이력·설계/커밋 묶음 구분·로컬 실행·GUI 검토 섹션 추가 |
+| 1.8 | 2026-05-29 | Report/11·Prompt/11 링크 반영 (분할 GREEN·TDD 진행 세션) |
 
 ---
 
