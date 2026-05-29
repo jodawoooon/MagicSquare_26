@@ -224,6 +224,8 @@ MagicSquare_xxx/
 | [Report/10. MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md](Report/10.%20MagicSquare_AC_FR_01_01_GREEN_Test_Implementation_Report.md) | AC-FR-01-01 **GREEN** 구현 보고서 (9건 통과) |
 | [Report/11. MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Report.md](Report/11.%20MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Report.md) | 분할 GREEN 4커밋·TDD 진행 현황·GUI 검토 **통합 보고서** |
 | [Report/12. MagicSquare_M1_GUI_PyQt_Implementation_Report.md](Report/12.%20MagicSquare_M1_GUI_PyQt_Implementation_Report.md) | M1-GUI PyQt6 셸 **구현 보고서** |
+| [Report/14. MagicSquare_Refactoring_Plan_Report.md](Report/14.%20MagicSquare_Refactoring_Plan_Report.md) | REFACTOR 사전 분석·계획 |
+| [Report/15. MagicSquare_REFACTOR_P0_Implementation_Report.md](Report/15.%20MagicSquare_REFACTOR_P0_Implementation_Report.md) | REFACTOR P0 **구현**·회귀 검증 |
 | [test_plan.md](test_plan.md) | FR-01 입력 크기 검증 **테스트 계획서** |
 | [defect_list.md](defect_list.md) | RED 단계 **결함 목록** (DEF-001~010) |
 | [Prompt/01. 4x4_MagicSquare_Problem_Definition_Report_Prompt.md](Prompt/01.%204x4_MagicSquare_Problem_Definition_Report_Prompt.md) | 동일 워크플로 **재실행용** 대화형 프롬프트 transcript |
@@ -236,6 +238,8 @@ MagicSquare_xxx/
 | [Prompt/10. MagicSquare_AC_FR_01_01_GREEN_Interactive_Prompt_Transcript.md](Prompt/10.%20MagicSquare_AC_FR_01_01_GREEN_Interactive_Prompt_Transcript.md) | AC-FR-01-01 일괄 GREEN **대화형 프롬프트 export** |
 | [Prompt/11. MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Interactive_Prompt_Transcript.md](Prompt/11.%20MagicSquare_AC_FR_01_01_Split_GREEN_TDD_Progress_Interactive_Prompt_Transcript.md) | 분할 GREEN·TDD 진행·GUI 검토 **대화형 프롬프트 export** |
 | [Prompt/12. MagicSquare_M1_GUI_PyQt_Interactive_Prompt_Transcript.md](Prompt/12.%20MagicSquare_M1_GUI_PyQt_Interactive_Prompt_Transcript.md) | M1-GUI PyQt6 구현·실행 **대화형 프롬프트 export** |
+| [Prompt/14. MagicSquare_Refactoring_Plan_Interactive_Prompt_Transcript.md](Prompt/14.%20MagicSquare_Refactoring_Plan_Interactive_Prompt_Transcript.md) | REFACTOR 계획 **대화형 프롬프트 export** |
+| [Prompt/15. MagicSquare_REFACTOR_P0_Interactive_Prompt_Transcript.md](Prompt/15.%20MagicSquare_REFACTOR_P0_Interactive_Prompt_Transcript.md) | REFACTOR P0 구현 **대화형 프롬프트 export** |
 
 ---
 
@@ -330,7 +334,7 @@ python -m pytest tests/test_golden_master_magic_square.py -m golden_master -v
 
 ## REFACTOR To-Do 리스트
 
-> **SSOT:** [Report/14. MagicSquare_Refactoring_Plan_Report.md](Report/14.%20MagicSquare_Refactoring_Plan_Report.md)  
+> **SSOT:** [Report/14](Report/14.%20MagicSquare_Refactoring_Plan_Report.md) (계획) · [Report/15](Report/15.%20MagicSquare_REFACTOR_P0_Implementation_Report.md) (P0 구현)  
 > **회귀 안전망 (매 커밋):** GREEN 33 + Golden Master 17  
 > **실행 순서:** C(P0) → A(P0) → B(P0) → A(P1)+B(P1) → C(P1) → B(P2)
 
@@ -699,6 +703,7 @@ Track B(Logic)를 먼저, FR-05에서 U-OUT과 짝을 맞춥니다. 각 행 = **
 | 1.11 | 2026-05-29 | REFACTOR To-Do 리스트 추가 — Report/14 기반 3그룹(A ECB · B SRP/계약 · C 테스트) 체크리스트 |
 | 1.12 | 2026-05-29 | 그룹 C P0 완료(수집 0건)·P1 Track B 8건 GREEN — `ui_boundary`, `solve_partial`, `tests/entity/grids.py` |
 | 1.13 | 2026-05-29 | ECB 리팩터(9d3250b)·size 검증 Result Type(2번째 커밋) — pipeline boundary 이동, Screen→UIBoundary |
+| 1.14 | 2026-05-29 | Report/15·Prompt/15 — REFACTOR P0 구현 보고서·Transcript export |
 
 ---
 
