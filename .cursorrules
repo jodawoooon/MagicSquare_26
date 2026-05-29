@@ -1,0 +1,11 @@
+# MagicSquare Cursor Rules Hub
+
+This repository uses modular rules in `.cursor/rules/`.
+
+Primary rule files:
+
+- `magicsquare-project.mdc`
+- `magicsquare-ecb-architecture.mdc`
+- `magicsquare-python-code-style.mdc`
+- `magicsquare-tdd-testing.mdc`
+- `magicsquare-forbidden.mdc`

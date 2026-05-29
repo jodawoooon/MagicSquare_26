@@ -1,0 +1,22 @@
+---
+description: Forbidden patterns and preferred alternatives for MagicSquare
+alwaysApply: true
+---
+
+# Forbidden Pattern Rule
+
+## Do Not Use
+
+- `print()` in production code.
+- Hard-coded magic values without meaningful named constants.
+- Bare `except:` or `except Exception:` without explicit handling intent.
+- Suppressing exceptions to force tests to pass.
+- Weakening/removing tests to bypass failing behavior.
+
+## Preferred Alternatives
+
+- Use `logging` with suitable log levels for runtime diagnostics.
+- Extract domain constants with meaningful names.
+- Catch specific exception types and re-raise with context when needed.
+- Fix root causes rather than muting symptoms.
+- Keep tests as executable requirements, not optional checks.

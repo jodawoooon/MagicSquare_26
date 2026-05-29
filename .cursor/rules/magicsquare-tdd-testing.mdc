@@ -1,0 +1,33 @@
+---
+description: Dual-Track TDD workflow and pytest testing standards
+globs: tests/**/*.py
+alwaysApply: false
+---
+
+# TDD and Testing Rule
+
+## Red Phase
+
+- Write a failing test before implementation.
+- Confirm the failure is expected and requirement-driven.
+- Do not start production code before seeing a meaningful failing test.
+
+## Green Phase
+
+- Implement the minimal code needed to pass current failing tests.
+- Do not refactor in this phase.
+- Run relevant tests after the minimal implementation passes.
+
+## Refactor Phase
+
+- Improve structure without changing observable behavior.
+- Preserve public contracts (input/output/exception behavior).
+- Re-run full impacted test scope after refactor.
+
+## Pytest Conventions
+
+- Framework: `pytest`
+- Pattern: AAA (Arrange-Act-Assert)
+- Test naming: `test_` prefix required
+- Default fixture scope: `function`
+- Use broader fixture scopes only when setup cost justifies it.

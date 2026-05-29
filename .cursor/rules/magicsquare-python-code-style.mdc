@@ -1,0 +1,29 @@
+---
+description: Python coding style, typing, and documentation standards
+globs: **/*.py
+alwaysApply: false
+---
+
+# Python Code Style Rule
+
+## Baseline
+
+- Target Python: 3.10+
+- Follow PEP 8 strictly.
+- Keep max line length at 88.
+
+## Type Hints
+
+- Add type hints to all function parameters and return types.
+- Avoid untyped public APIs.
+
+## Documentation
+
+- Add Google-style docstrings for all public classes and methods.
+- Explain behavioral contract (inputs, outputs, exceptions), not obvious syntax.
+
+## Quality Defaults
+
+- Prefer explicit names over abbreviations.
+- Keep functions focused and small.
+- Avoid hidden side effects; make state transitions obvious.

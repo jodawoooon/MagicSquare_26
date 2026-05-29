@@ -1,0 +1,21 @@
+---
+description: Core project context and expected agent behavior for MagicSquare
+alwaysApply: true
+---
+
+# MagicSquare Project Rule
+
+## Project Context
+
+- Project name: MagicSquare
+- Domain: 4x4 magic square generation and validation
+- Primary language: Python
+- Main goal: keep maintainable codebase with ECB architecture and Dual-Track TDD
+
+## Agent Operating Principles
+
+- Check related tests before writing production code.
+- Decompose requirements into testable units first.
+- Respect ECB boundaries when proposing or generating code.
+- Prefer minimal implementation that satisfies current tests.
+- Re-run relevant pytest scope after edits and check for regressions.
