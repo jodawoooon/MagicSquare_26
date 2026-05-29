@@ -11,24 +11,22 @@ from boundary.schemas import ErrorResponse
 class BoundaryValidator:
     """Validates 4x4 grid dimensions before Control/Entity processing."""
 
-    def validate(self, grid: list[list[int]] | None) -> ErrorResponse:
+    def validate(self, grid: list[list[int]] | None) -> ErrorResponse | None:
         """Return INVALID_SIZE when the grid is not 4x4.
 
         Args:
             grid: Puzzle matrix or None when input is missing.
 
         Returns:
-            ErrorResponse with INVALID_SIZE when size rules are violated.
-
-        Raises:
-            NotImplementedError: When the grid passes size checks (out of scope).
+            ErrorResponse with INVALID_SIZE when size rules are violated;
+            None when the grid passes size checks (further validation is separate).
         """
         if grid is None or self._has_invalid_size(grid):
             return ErrorResponse(
                 code=INVALID_SIZE_CODE,
                 message=INVALID_SIZE_MESSAGE,
             )
-        raise NotImplementedError("Valid 4x4 grid is out of AC-FR-01-01 scope.")
+        return None
 
     def _has_invalid_size(self, grid: list[list[int]]) -> bool:
         if len(grid) != GRID_SIZE:

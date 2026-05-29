@@ -29,10 +29,7 @@ class UIBoundary:
         Returns:
             ErrorResponse when size validation fails; None when size is valid.
         """
-        try:
-            return self._size_validator.validate(grid)
-        except NotImplementedError:
-            return None
+        return self._size_validator.validate(grid)
 
     def solve(self, grid: list[list[int]] | None) -> SolveOutcome | ErrorResponse:
         """Validate and solve, returning a pipeline outcome or size error envelope.

@@ -44,7 +44,7 @@ class MagicSquarePipeline:
         Returns:
             Success outcome with int[6] solution or error outcome with code.
         """
-        size_error = self._try_size_validation(grid)
+        size_error = self._size_validator.validate(grid)
         if size_error is not None:
             return SolveOutcome(kind="error", error_code=size_error.code)
 
@@ -58,9 +58,3 @@ class MagicSquarePipeline:
             return SolveOutcome(kind="error", error_code=_NO_VALID_ASSIGNMENT_CODE)
 
         return SolveOutcome(kind="success", solution=solution)
-
-    def _try_size_validation(self, grid: list[list[int]]) -> ErrorResponse | None:
-        try:
-            return self._size_validator.validate(grid)
-        except NotImplementedError:
-            return None
